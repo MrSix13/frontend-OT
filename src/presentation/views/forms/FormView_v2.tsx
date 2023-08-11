@@ -170,6 +170,7 @@ const FormularioView: React.FC<FormModalProps> = ({
                         defaultValue='' 
                         control={control}
                         name="rut"
+                        required={false}
                         data={formData?.rut || ""}
                       />
                   

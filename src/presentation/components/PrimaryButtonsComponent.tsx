@@ -4,15 +4,16 @@ import { ExportCSV } from '.';
 import { Button, Tooltip, button } from '@material-tailwind/react';
 import { SiAddthis } from "react-icons/si";
 import { FiRefreshCw } from "react-icons/fi";
+import { usePermission } from '../hooks';
 
 
 interface IPrimaryButtonProps{
-    handlePageSize: () => void;
-    handleDeleteAll: () => void;
-    escritura: boolean;
-    personsLength: number;
-    handleAddPerson: () => void;
-    handleRefresh: () => void;
+    handlePageSize?: () => void;
+    handleDeleteAll?: () => void;
+    escritura?: boolean;
+    personsLength?: number;
+    handleAddPerson?: () => void;
+    handleRefresh?: () => void;
     showForwardButton?:boolean;
     showAddButton?: boolean;
     showRefreshButton?:boolean;
@@ -25,7 +26,6 @@ interface IPrimaryButtonProps{
 const PrimaryButtonsComponent:React.FC<IPrimaryButtonProps> = ({
     handleDeleteAll,
     handlePageSize,
-    escritura,
     personsLength,
     handleAddPerson,
     handleRefresh,
@@ -35,8 +35,15 @@ const PrimaryButtonsComponent:React.FC<IPrimaryButtonProps> = ({
     showDeleteButton,
     showExportButton
 }) => {
+
+  const {escritura} = usePermission()
   return (
     <div className="flex w-full justify-end px-4 mx-4">
+
+
+
+
+
      {showForwardButton && (
       <Tooltip content="Siguiente">
           <button
@@ -44,12 +51,17 @@ const PrimaryButtonsComponent:React.FC<IPrimaryButtonProps> = ({
           onClick={handlePageSize}
           >
           <AiOutlineForward
-              className="text-white h-10 w-10"
-            
+              className="text-white h-10 w-10"        
           />
         </button>
       </Tooltip>
      )}
+
+
+
+
+
+
     { showAddButton && escritura && (
       <Tooltip content="Agregar">
         <button
@@ -60,6 +72,9 @@ const PrimaryButtonsComponent:React.FC<IPrimaryButtonProps> = ({
         </button>
       </Tooltip>
     )}
+
+
+
     {showRefreshButton && (
       <Tooltip content="Refrescar">
           <button

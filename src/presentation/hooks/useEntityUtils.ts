@@ -10,7 +10,9 @@ import { mappedPerson } from '../utils';
 
 
 
-export const useEntityUtils = (entityApiBaseUrl:string) => {
+export const useEntityUtils = (entityApiBaseUrl:string, query:string) => {
+    const baseUrl = entityApiBaseUrl.startsWith('http') ? entityApiBaseUrl : `http://127.0.0.1:8000${entityApiBaseUrl}`;
+    console.log('baseUrl', baseUrl)
     const [entityID, setEntityID] = useState(0);
     const [entity, setEntity] = useState<any | null>(null);
     const [entities, setEntities] = useState([]);
@@ -22,12 +24,11 @@ export const useEntityUtils = (entityApiBaseUrl:string) => {
     const [onDelete, setOnDelete] = useState<boolean>(false);
 
     const {lectura,escritura} = usePermission();
-    const {listEntity, deleteEntity, deleteAllEntity, editEntity} = useCrud(entityApiBaseUrl)
+    const {listEntity, deleteEntity, deleteAllEntity, editEntity} = useCrud(baseUrl)
 
 
 
     const openModal = useCallback(()=>{
-        console.log('open');
         setIsModalOpen(true)
     },[]);
 
@@ -46,7 +47,6 @@ export const useEntityUtils = (entityApiBaseUrl:string) => {
             setIsModalEdit((prev)=>!prev)
             if(id){
               setEntityID(id)
-              console.log('desde hook')
               const selectedEntity = entities.find((entity)=>entity.id === id);
               setEntity(selectedEntity || null);
             }else{
@@ -157,17 +157,17 @@ export const useEntityUtils = (entityApiBaseUrl:string) => {
 
 
 
-    useEffect(()=>{
-        listEntity(pageSize)
-        .then((data)=>{
-            setEntities((prev)=>[...prev, ...data])
+    useEffect(() => {
+        listEntity(pageSize, query)
+          .then((data) => {
+            console.log('useData', data)
+            data && setEntities((prev) => (prev ? [...prev, ...data] : [...data]));
           })
-          .catch((e)=>{
-            console.log(e)
-          })
-    },[pageSize, onDelete])
+          .catch((e) => {
+            console.log(e);
+          });
+      }, [pageSize, onDelete]);
 
-    console.log('pageSiZE', pageSize)
 
 
     return{

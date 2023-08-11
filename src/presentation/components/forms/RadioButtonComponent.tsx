@@ -18,10 +18,10 @@ const RadioButtonComponent:React.FC<IRadioButtonProps> = ({
     options,
     data
 }) => {
-  console.log(data)
+
   return (
     <div className='px-6 py-2 w-full flex justify-between'>
-        <label  className="text-gray-700 text-sm font-bold w-[20%] px-8 text-center">{label}</label>
+        <label  className=" label-input w-[10%]">{label}</label>
         {options.map((option, index)=>(
             <div className='px-8 py-2 flex w-1/3 text-center justify-between' key={index}>
                 <Controller

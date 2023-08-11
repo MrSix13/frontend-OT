@@ -24,9 +24,10 @@ const TextInputComponent:React.FC<ITextInputProps> = ({
 }) => {
   return (
     <div  className="flex items-center mb-2">
-        <label className="text-gray-700 text-sm font-bold w-1/3 text-center">{label}</label>
+        <label className="label-input w-1/3">{label}</label>
         <Controller
           name={name}
+          
           control={control}
           defaultValue={data ? data : ""}
           render={({field})=>(
@@ -34,9 +35,10 @@ const TextInputComponent:React.FC<ITextInputProps> = ({
             {...field}
              label={label}
              id={label}
+            //  required={true}
              type={type}
              readOnly={onlyRead}
-             className='shadow appearance-none border rounded py-2 px-3 w-2/3 text-gray-700'
+             className='custom-input py-2 px-3 w-2/3'
             />
           )}
         />

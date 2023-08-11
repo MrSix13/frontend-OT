@@ -23,7 +23,7 @@ const SelectInputComponent:React.FC<ISelectInputProps> = ({
 }) => {
   return (
     <div className='flex items-center mb-2 mt-select mt-select-dropdown-up'>
-        <label className="text-gray-700 text-sm font-bold w-1/3 text-center">{label}</label>
+        <label className="label-input w-1/3">{label}</label>
         <Controller
             name={name}
             control={control}
@@ -32,12 +32,12 @@ const SelectInputComponent:React.FC<ISelectInputProps> = ({
                 <Select
                    {...field}
                    value={field.value}
-                   defaultValue={data ? data : ""}
+                   defaultValue='hola'
                    onChange={(e)=>{
                     field.onChange(e)
                     onChange && onChange(e)
                 }}
-                  className='shadow appearance-none border rounded py-2 px-3'
+                  className='custom-input py-2 px-3'
                 >   
                     
                     {options && options.map((option, index)=>(

@@ -20,6 +20,20 @@ export const mappedPerson = (data) => {
 
 }
 
+export const table_head_cargos = [
+    {
+        cell: <input type="checkbox"/>,
+        key: "checkbox"
+    },
+    {
+        cell: 'Nombre',
+        key: 'nombre'
+    },
+    {
+        cell: 'Opciones',
+        key: 'opciones'
+    },
+]
 
 
 export const TABLE_HEAD = [

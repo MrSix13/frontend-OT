@@ -27,7 +27,7 @@ import {
   Bars2Icon,
 } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
- 
+
 // profile menu component
 const profileMenuItems = [
   {
@@ -51,11 +51,11 @@ const profileMenuItems = [
     icon: PowerIcon,
   },
 ];
- 
+
 function ProfileMenu() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const closeMenu = () => setIsMenuOpen(false);
- 
+
   return (
     <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
       <MenuHandler>
@@ -111,37 +111,40 @@ function ProfileMenu() {
     </Menu>
   );
 }
- 
+
 // nav list menu
 const navListMenuItems = [
   {
-    title: "Mantenedor 1",
+    title: "Mantenedor de Personas",
     link: "/personas",
   },
   {
-    title: "Pagina 1",
-    link: "/private",
+    title: "Mantenedor de Cargos",
+    link: "/cargos",
   },
   {
-    title: "Pagina 2",
+    title: "Mantenedor de Usuarios",
+    link: "/usuarios",
+  },
+  {
+    title: "Login",
     link: "/login",
   },
 ];
- 
+
 function NavListMenu() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
- 
+
   const triggers = {
     onMouseEnter: () => setIsMenuOpen(true),
     onMouseLeave: () => setIsMenuOpen(false),
   };
- 
+
   const renderItems = navListMenuItems.map(({ title, link }) => (
     <Link to={link} key={title}>
       <MenuItem>
         <Typography variant="h6" color="blue-gray" className="mb-1">
           {title}
-
         </Typography>
         <Typography variant="small" color="gray" className="font-normal">
           {title}
@@ -149,7 +152,7 @@ function NavListMenu() {
       </MenuItem>
     </Link>
   ));
- 
+
   return (
     <React.Fragment>
       <Menu open={isMenuOpen} handler={setIsMenuOpen}>
@@ -195,7 +198,7 @@ function NavListMenu() {
     </React.Fragment>
   );
 }
- 
+
 // nav list component
 const navListItems = [
   {
@@ -211,11 +214,11 @@ const navListItems = [
     icon: CodeBracketSquareIcon,
   },
   {
-    label: 'Lista de Persona',
-    icon: UserCircleIcon
-  }
+    label: "Lista de Persona",
+    icon: UserCircleIcon,
+  },
 ];
- 
+
 function NavList() {
   return (
     <ul className="mb-4 mt-2 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center">
@@ -238,18 +241,18 @@ function NavList() {
     </ul>
   );
 }
- 
+
 export default function ComplexNavbar() {
   const [isNavOpen, setIsNavOpen] = React.useState(false);
   const toggleIsNavOpen = () => setIsNavOpen((cur) => !cur);
- 
+
   React.useEffect(() => {
     window.addEventListener(
       "resize",
       () => window.innerWidth >= 960 && setIsNavOpen(false)
     );
   }, []);
- 
+
   return (
     <Navbar className=" mt-2 mx-auto max-w-screen-xl p-2 lg:rounded-full lg:pl-6">
       <div className="relative mx-auto flex items-center text-blue-gray-900">

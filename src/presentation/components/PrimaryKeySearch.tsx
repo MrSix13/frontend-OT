@@ -1,47 +1,67 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-floating-promises */
-import React, { useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { Button, Input, Tooltip } from '@material-tailwind/react';
-import { IPerson } from '../../interfaces';
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import useCrud from '../hooks/useCrud';
+import React, { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import {
+  Button,
+  Input,
+  Option,
+  Select,
+  Tooltip,
+} from "@material-tailwind/react";
+import { IPerson } from "../../interfaces";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import useCrud from "../hooks/useCrud";
+import { useEntityUtils } from "../hooks";
+import { HiDatabase } from "react-icons/hi";
 
-interface IPrimaryKeyState{
-  [key:string]: string | number;
+interface IPrimaryKeyState {
+  [key: string]: string | number;
 }
 
 interface PrimaryKeySearchProps {
   setState: React.Dispatch<React.SetStateAction<any[]>>;
-  primaryKeyInputs: {label: string;type: string; name:string}[];
+  primaryKeyInputs: { label: string; type: string; name: string }[];
+  baseUrl: string;
+  selectUrl: string;
 }
 
-const PrimaryKeySearch: React.FC<PrimaryKeySearchProps> = ({ setState, primaryKeyInputs }) => {
+const PrimaryKeySearch: React.FC<PrimaryKeySearchProps> = ({
+  setState,
+  primaryKeyInputs,
+  baseUrl,
+  selectUrl,
+}) => {
   const { control, handleSubmit } = useForm<IPrimaryKeyState>();
-  const [inputValues, setInputValues] = useState<IPrimaryKeyState>({})
-  const { searchEntityByPrimaryKeys } = useCrud('/api/personas');
-  
-  
-  const handleInputChange = (name:string, value:string) => {
-    setInputValues((prev)=>({...prev, [name]: value}))
-  }
-  
-  const handleSearch = async (data: IPrimaryKeyState) => {
-      const searchParams = Object.entries(data)
-      .map(([key, value]) => (value ? `${key}=${encodeURIComponent(value)}` : ''))
-      .filter((param)=> param !== '')
-      .join('&');
+  const [inputValues, setInputValues] = useState<IPrimaryKeyState>({});
+  const { searchEntityByPrimaryKeys } = useCrud(baseUrl);
 
-      try {
-      const response = await searchEntityByPrimaryKeys(searchParams);
-       setState(response)
+  //PASAR POR PARAMETROS
+  const { entities } = useEntityUtils(selectUrl, "02");
+
+  const handleInputChange = (name: string, value: string) => {
+    setInputValues((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSearch = async (data: IPrimaryKeyState) => {
+    const searchParams = Object.entries(data)
+      .map(([key, value]) =>
+        value ? `${key}=${encodeURIComponent(value)}` : ""
+      )
+      .filter((param) => param !== "")
+      .join("&");
+
+    try {
+      const response = await searchEntityByPrimaryKeys(searchParams, "01");
+      setState(response);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleKeyDown = (e:React.KeyboardEvent<HTMLInputElement>) => {
-    if(e.key === ' ' || e.key === 'Enter'){
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === " " || e.key === "Enter") {
       e.preventDefault();
       handleSubmit(handleSearch)();
     }
@@ -52,41 +72,65 @@ const PrimaryKeySearch: React.FC<PrimaryKeySearchProps> = ({ setState, primaryKe
   };
 
   const renderInputs = () => {
-    return primaryKeyInputs.map((input, index)=>(
+    return primaryKeyInputs.map((input, index) => (
       <Controller
         key={index}
         name={input.name}
         control={control}
-        defaultValue=''
-        render={({field})=>(
-          <Input
-            {...field}
-            label={input.label}
-            value={inputValues[input.name] || ''}
-            onChange={(e)=>{
-              field.onChange(e)
-              handleInputChange(input.name, e.target.value)
-            }}
-            onKeyDown={handleKeyDown}
-            onBlur={handleBlur}
-          />
+        defaultValue=""
+        render={({ field }) => (
+          <>
+            {input.type === "select" ? (
+              <Select
+                {...field}
+                value={field.value.toString()}
+                onChange={(e) => {
+                  field.onChange(e); // Actualizar el valor del campo controlado
+                  console.log("onchange", e);
+                  if (e !== "") {
+                    handleSearch({ [input.name]: e });
+                  }
+                }}
+                label={input.label}
+              >
+                <Option value={"0"}>{input.label}</Option> {/* Opción vacía */}
+                {entities.map((entity, index) => (
+                  <Option key={index} value={entity[0].toString()}>
+                    {entity[1]}
+                  </Option>
+                ))}
+              </Select>
+            ) : (
+              <Input
+                {...field}
+                label={input.label}
+                value={inputValues[input.name] || ""}
+                onChange={(e) => {
+                  field.onChange(e);
+                  handleInputChange(input.name, e.target.value);
+                }}
+                onKeyDown={handleKeyDown}
+                onBlur={handleBlur}
+              />
+            )}
+          </>
         )}
       />
-    ))
-  }
-
-
-
+    ));
+  };
   return (
-      <form className='flex'>
-        {renderInputs()}
-        <Tooltip content="Buscar">
-          <Button className='bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-2 rounded' type='submit' onClick={handleSubmit(handleSearch)}>
-            <MagnifyingGlassIcon className='w-6 h-6'/>
-            
-          </Button>
-        </Tooltip>
-      </form>
+    <form className="flex">
+      {renderInputs()}
+      <Tooltip content="Buscar">
+        <Button
+          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-2 rounded"
+          type="submit"
+          onClick={handleSubmit(handleSearch)}
+        >
+          <MagnifyingGlassIcon className="w-6 h-6" />
+        </Button>
+      </Tooltip>
+    </form>
   );
 };
 

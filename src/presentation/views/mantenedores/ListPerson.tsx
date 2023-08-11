@@ -142,19 +142,20 @@ export default function ListPerson() {
     const handleEdit:SubmitHandler<IPerson> = useCallback((data)=>{
       if(escritura){
         const cleanedData = mappedPerson(data)
-        editEntity(person.id,cleanedData)
-           .then(()=>{
-              setPersons([])
-              setOnDelete((prev)=>!prev)
-              toast.success('persona editada corectamente')
-              closeModal()
-           })
-           .catch((e)=>{
-              toast.error(e)
-              console.log(e)
-           })
-      }else{
-        alert('No tienes el permiso requerido')
+        console.log('ententity.id', entity);
+      //   editEntity(entity.id,cleanedData)
+      //      .then(()=>{
+      //         setPersons([])
+      //         setOnDelete((prev)=>!prev)
+      //         toast.success('persona editada corectamente')
+      //         closeModal()
+      //      })
+      //      .catch((e)=>{
+      //         toast.error(e)
+      //         console.log(e)
+      //      })
+      // }else{
+      //   alert('No tienes el permiso requerido')
       }
     },[rutPerson, closeModal, escritura])
 
@@ -237,7 +238,7 @@ export default function ListPerson() {
     // },[closeModal,onDelete,pageSize])
 
 
-    console.log('entities', entities)
+  
     
   return (
     <>
@@ -250,6 +251,7 @@ export default function ListPerson() {
                 </Typography>
               </div>
               <div className="flex shrink-0 flex-col gap-2 sm:flex-row w-[50%]">
+
               <PrimaryButtonsComponent
                 handlePageSize={handlePageSize}
                 handleDeleteAll={handleDeleteAll}
@@ -257,12 +259,17 @@ export default function ListPerson() {
                 personsLength={persons.length}
                 handleAddPerson={openModal} 
                 handleRefresh={handleRefresh}
+
+
                 showAddButton={true}
                 showDeleteButton={true}
                 showExportButton={true}
                 showForwardButton={true}
                 showRefreshButton={true} 
               />
+
+
+
               </div>
             </div>
             <div className="flex flex-col items-center gap-4 md:flex-row">
@@ -429,14 +436,20 @@ export default function ListPerson() {
               </tbody>
             </table>
           </CardBody>
-          {/* <div>
+
+
+
+
+
+
+          <div>
             <h1>Componente Table</h1>
             <TableComponent
              tableHead={TABLE_HEAD}
              data={entities}
             
             />
-          </div> */}
+          </div>
         </Card>
         <Outlet/>
       {isEntityProfile && <FormularioView onlyRead={true}  data={entity} closeModal={closeModal} isOpen={isPersonProfile}/>}

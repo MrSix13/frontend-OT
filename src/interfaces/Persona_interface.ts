@@ -17,6 +17,8 @@ export interface IPerson{
 }
 
 
+// ========================PESONAS=======================
+
 export interface IRegiones{
     id:number;
     nombre: string;
