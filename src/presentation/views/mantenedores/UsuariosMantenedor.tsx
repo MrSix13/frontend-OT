@@ -100,8 +100,8 @@ function UsuariosMantenedor() {
         />
       </div>
 
-      {/* {isModalOpen && <UserForm label="Crear Usuario" handleChange={handleChange} closeModal={closeModal} />} */}
-      {isModalOpen && <PermisosMantenedor closeModal={closeModal} />}
+      {isModalOpen && <UserForm label="Crear Usuario" handleChange={handleChange} closeModal={closeModal} />}
+      {/* {isModalOpen && <PermisosMantenedor closeModal={closeModal} />} */}
 
     </div>
   );
