@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   Button,
+  IconButton,
   Input,
   Option,
   Select,
@@ -79,7 +80,7 @@ const PrimaryKeySearch: React.FC<PrimaryKeySearchProps> = ({
         control={control}
         defaultValue=""
         render={({ field }) => (
-          <>
+          <div className="mx-2">
             {input.type === "select" ? (
               <Select
                 {...field}
@@ -105,6 +106,7 @@ const PrimaryKeySearch: React.FC<PrimaryKeySearchProps> = ({
                 {...field}
                 label={input.label}
                 value={inputValues[input.name] || ""}
+
                 onChange={(e) => {
                   field.onChange(e);
                   handleInputChange(input.name, e.target.value);
@@ -113,22 +115,24 @@ const PrimaryKeySearch: React.FC<PrimaryKeySearchProps> = ({
                 onBlur={handleBlur}
               />
             )}
-          </>
+          </div>
         )}
       />
     ));
   };
   return (
-    <form className="flex">
+    <form className="flex mx-10">
       {renderInputs()}
       <Tooltip content="Buscar">
-        <Button
-          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-2 rounded"
+        <IconButton
+          variant="text"
+          color="blue-gray"
           type="submit"
           onClick={handleSubmit(handleSearch)}
+        // className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-2 rounded"
         >
           <MagnifyingGlassIcon className="w-6 h-6" />
-        </Button>
+        </IconButton>
       </Tooltip>
     </form>
   );
