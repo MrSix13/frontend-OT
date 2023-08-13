@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
@@ -11,12 +12,13 @@ import { HiEye } from "react-icons/hi";
 import { usePermission } from "../hooks";
 
 interface ITableComponentProps {
-  tableHead?: { cell: JSX.Element | string; key: string; visible: boolean }[];
-  data?: React.Dispatch<React.SetStateAction<any[]>>;
+  tableHead: { cell: JSX.Element | string; key: string; visible: boolean }[];
+  data: React.Dispatch<React.SetStateAction<any[]>>;
   renderButtons?: (item: any) => React.ReactNode;
   handleSelectChecked?: (id: number) => void;
   handleSelectedCheckedAll?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  selectedIds: number[];
+  toggleEditModal?: (id: number) => void;
+  selectedIds?: number[];
   entidad: string
 }
 
@@ -26,6 +28,7 @@ const TableComponent: React.FC<ITableComponentProps> = ({
   entidad,
   handleSelectChecked,
   handleSelectedCheckedAll,
+  toggleEditModal,
   selectedIds
 }) => {
   const { escritura, lectura } = usePermission();
@@ -66,12 +69,12 @@ const TableComponent: React.FC<ITableComponentProps> = ({
             return (
               <tr key={rowIndex}>
                 {rowData.map((row, index) => {
-                  const visible2 = tableHead[index].visible;
+                  const visible2 = tableHead && tableHead[index].visible;
                   return (
                     visible2 && (
                       <td className="border-b-4 px-4 py-2" key={index}>
                         {index === 0 ? (
-                          <input checked={selectedIds.includes(id)} onChange={() => handleSelectChecked(id)} type="checkbox" name="" id="" />
+                          <input checked={selectedIds && selectedIds.includes(id)} onChange={() => handleSelectChecked(id)} type="checkbox" name="" id="" />
                         ) : (
                           <Typography
                             variant="small"
@@ -91,7 +94,7 @@ const TableComponent: React.FC<ITableComponentProps> = ({
                       <IconButton
                         variant="text"
                         color="blue-gray"
-                      // onClick={() => toggleEditModal(id)}
+                        onClick={() => toggleEditModal(id)}
                       >
                         <PencilIcon className="h-4 w-4" />
                       </IconButton>

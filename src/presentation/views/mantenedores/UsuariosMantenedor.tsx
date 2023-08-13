@@ -5,6 +5,7 @@ import TableComponent from "../../components/TableComponent";
 import { useEntityUtils } from "../../hooks";
 import { table_head_usuarios } from "../../utils/table_head_utils";
 import UserForm from "../forms/UserForm";
+import PermisosMantenedor from "./PermisosMantenedor";
 
 function UsuariosMantenedor() {
   const [usuarios, setUsuarios] = useState([]);
@@ -16,6 +17,8 @@ function UsuariosMantenedor() {
     setEntities,
     //modal methods
     isModalOpen,
+    isModalEdit,
+    toggleEditModal,
     openModal,
     closeModal,
     //Check methods
@@ -89,6 +92,7 @@ function UsuariosMantenedor() {
         <TableComponent
           handleSelectChecked={handleSelect}
           handleSelectedCheckedAll={handleSelectedAll}
+          toggleEditModal={toggleEditModal}
           selectedIds={selectedIds}
           entidad="Usuario"
           data={usuariosJson}
@@ -96,7 +100,9 @@ function UsuariosMantenedor() {
         />
       </div>
 
-      {isModalOpen && <UserForm handleChange={handleChange} closeModal={closeModal} />}
+      {/* {isModalOpen && <UserForm label="Crear Usuario" handleChange={handleChange} closeModal={closeModal} />} */}
+      {isModalOpen && <PermisosMantenedor closeModal={closeModal} />}
+
     </div>
   );
 }

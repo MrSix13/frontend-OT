@@ -23,7 +23,7 @@ interface IPrimaryKeyState {
 
 interface PrimaryKeySearchProps {
   setState: React.Dispatch<React.SetStateAction<any[]>>;
-  primaryKeyInputs: { label: string; type: string; name: string }[];
+  primaryKeyInputs: { label: string; type: string; name: string; options?: string[] }[];
   baseUrl: string;
   selectUrl: string;
 }
@@ -82,12 +82,12 @@ const PrimaryKeySearch: React.FC<PrimaryKeySearchProps> = ({
         render={({ field }) => (
           <div className="mx-2">
             {input.type === "select" ? (
+              // ... Código para el select
               <Select
                 {...field}
                 value={field.value.toString()}
                 onChange={(e) => {
-                  field.onChange(e); // Actualizar el valor del campo controlado
-                  console.log("onchange", e);
+                  field.onChange(e);
                   if (e !== "") {
                     handleSearch({ [input.name]: e });
                   }
@@ -101,12 +101,44 @@ const PrimaryKeySearch: React.FC<PrimaryKeySearchProps> = ({
                   </Option>
                 ))}
               </Select>
+            ) : input.type === "radiobuttons" ? (
+              <div>
+                <label className="block font-medium mb-1">{input.label}</label>
+                <div className="flex space-x-2">
+                  {input.options?.map((entity, index) => (
+                    <div key={index} className="flex items-center">
+                      <input
+                        type="radio"
+                        {...field}
+                        value={entity}
+                        checked={field.value === entity[0].toString()}
+                        onChange={() => {
+                          field.onChange(entity[0].toString());
+                        }}
+                      />
+                      <span className="ml-1">{entity}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : input.type === "date" ? (
+              <div>
+                <label className="block font-medium mb-1">{input.label}</label>
+                <input
+                  type="date"
+                  {...field}
+                  value={field.value || ""}
+                  onChange={(e) => {
+                    field.onChange(e.target.value);
+                  }}
+                  onBlur={handleBlur}
+                />
+              </div>
             ) : (
               <Input
                 {...field}
                 label={input.label}
                 value={inputValues[input.name] || ""}
-
                 onChange={(e) => {
                   field.onChange(e);
                   handleInputChange(input.name, e.target.value);
@@ -116,6 +148,7 @@ const PrimaryKeySearch: React.FC<PrimaryKeySearchProps> = ({
               />
             )}
           </div>
+
         )}
       />
     ));
