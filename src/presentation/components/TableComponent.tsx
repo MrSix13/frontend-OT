@@ -43,7 +43,7 @@ const TableComponent: React.FC<ITableComponentProps> = ({
                     <Typography
                       variant="small"
                       color="blue-gray"
-                      className="font-bold leading-none opacity-70"
+                      className="font-bold text-lg leading-none opacity-70"
                     >
                       {column.cell}
                     </Typography>
@@ -69,7 +69,7 @@ const TableComponent: React.FC<ITableComponentProps> = ({
                           <Typography
                             variant="small"
                             color="blue-gray"
-                            className="font-normal"
+                            className="font-normal text-sm"
                           >
                             {row || ""}
                           </Typography>

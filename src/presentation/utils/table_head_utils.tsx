@@ -41,6 +41,7 @@ export const table_head_perfiles = [
   },
 ];
 
+
 // Para la tabla Usuarios
 export const table_head_usuarios = [
   {
