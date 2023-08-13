@@ -1,28 +1,31 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import React from "react";
 import { IconButton, Tooltip, Typography } from "@material-tailwind/react";
-
-import { usePermission } from "../hooks";
+import { RiSettings3Fill } from "react-icons/ri";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import { HiEye } from "react-icons/hi";
+
+
+import { usePermission } from "../hooks";
 
 interface ITableComponentProps {
   tableHead?: { cell: string; key: string; visible: boolean }[];
   data?: React.Dispatch<React.SetStateAction<any[]>>;
   renderButtons?: (item: any) => React.ReactNode;
+  entidad: string
 }
 
 const TableComponent: React.FC<ITableComponentProps> = ({
   tableHead,
   data,
+  entidad
 }) => {
-  const numberIndex = 0;
-  const columnCheck = tableHead[0].key;
   const { escritura, lectura } = usePermission();
 
   return (
-    <table className="mt-4 w-full min-w-max table-auto text-left">
+    <table className="mt-4 w-full min-w-max table-fixed text-left">
       <thead>
         <tr>
           {tableHead &&
@@ -40,7 +43,7 @@ const TableComponent: React.FC<ITableComponentProps> = ({
                     <Typography
                       variant="small"
                       color="blue-gray"
-                      className="font-normal leading-none opacity-70"
+                      className="font-bold leading-none opacity-70"
                     >
                       {column.cell}
                     </Typography>
@@ -55,15 +58,11 @@ const TableComponent: React.FC<ITableComponentProps> = ({
           data.map((rowData, rowIndex) => {
             return (
               <tr key={rowIndex}>
-                {/* <td key={0}>
-                                        <input  type="checkbox" name="" id="" />
-                                    </td> */}
-
                 {rowData.map((row, index) => {
                   const visible2 = tableHead[index].visible;
                   return (
                     visible2 && (
-                      <td key={index}>
+                      <td className="border-b-4 px-4 py-2" key={index}>
                         {index === 0 ? (
                           <input type="checkbox" name="" id="" />
                         ) : (
@@ -81,11 +80,11 @@ const TableComponent: React.FC<ITableComponentProps> = ({
                 })}
                 <td>
                   {escritura ? (
-                    <Tooltip content="Editar Usuario">
+                    <Tooltip content={`Editar ${entidad}`}>
                       <IconButton
                         variant="text"
                         color="blue-gray"
-                        // onClick={() => toggleEditModal(id)}
+                      // onClick={() => toggleEditModal(id)}
                       >
                         <PencilIcon className="h-4 w-4" />
                       </IconButton>
@@ -94,12 +93,37 @@ const TableComponent: React.FC<ITableComponentProps> = ({
                     <></>
                   )}
 
-                  {escritura ? (
-                    <Tooltip content="Eliminar Usuario">
+
+                  {lectura && (
+                    <Tooltip content={`ver ${entidad}`}>
                       <IconButton
                         variant="text"
                         color="blue-gray"
-                        // onClick={() => handleDelete(id)}
+                      // onClick={() => handleEntity(id)}
+                      >
+                        <HiEye className="h-4 w-4" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+
+                  {escritura && (
+                    <Tooltip content="Permisos de Sistema">
+                      <IconButton
+                        variant="text"
+                        color="blue-gray"
+                      // onClick={() => handleEntity(id)}
+                      >
+                        <RiSettings3Fill className="h-4 w-4" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+
+                  {escritura ? (
+                    <Tooltip content={`Eliminar ${entidad}`}>
+                      <IconButton
+                        variant="text"
+                        color="blue-gray"
+                      // onClick={() => handleDelete(id)}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -121,17 +145,6 @@ const TableComponent: React.FC<ITableComponentProps> = ({
                     <></>
                   )}
 
-                  {lectura && (
-                    <Tooltip content="ver usuario">
-                      <IconButton
-                        variant="text"
-                        color="blue-gray"
-                        // onClick={() => handleEntity(id)}
-                      >
-                        <HiEye className="h-4 w-4" />
-                      </IconButton>
-                    </Tooltip>
-                  )}
                 </td>
               </tr>
             );
@@ -143,88 +156,3 @@ const TableComponent: React.FC<ITableComponentProps> = ({
 
 export default TableComponent;
 
-// TABLA LEE OBJETOS
-
-// console.log('data table', data)
-// const {escritura, lectura} = usePermission()
-// return (
-//   <table className='mt-4 w-full min-w-max table-auto text-left'>
-//       <thead>
-//           <tr>
-//               {tableHead && tableHead.map((column, index)=>{
-//                   if(column.key === 'checkbox' && !escritura){
-//                       return null
-//                   }
-//                   return (
-//                       <th key={index} className='border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 '>
-//                           {column.key === "checkbox" ? (
-//                               <input className='hidden-input' type='checkbox' />
-//                           ) : (
-//                               <Typography
-//                               variant="small"
-//                               color="blue-gray"
-//                               className="font-normal leading-none opacity-70"
-//                               >
-//                             {column.cell}
-//                           </Typography>
-//                           )}
-//                       </th>
-//                   )
-//               })}
-//           </tr>
-//       </thead>
-//       <tbody>
-//           {}
-//       </tbody>
-
-//   </table>
-
-// {data.map((row, rowIndex) => (
-//     <tr key={rowIndex}>
-//       {tableHead.map((column, columnIndex) => (
-//           <tr>
-//                   <td
-//                       key={columnIndex}
-//                       className={rowIndex === data.length - 1 ? 'p-4' : 'p-4 border-b border-blue-gray-50'}
-//                   >
-//                       <Typography variant='small' color='blue-gray' className='font-normal'>
-//                       {row[column.key]} {/* Mostrar el valor correspondiente a la clave */}
-//                       </Typography>
-//                   </td>
-//                   <td colSpan={tableHead.length}>
-//                   {escritura && (
-//                       <Tooltip content="Editar Persona">
-//                       <IconButton variant="text" color="blue-gray">
-//                           <PencilIcon className="h-4 w-4" />
-//                       </IconButton>
-//                       </Tooltip>
-//                   )}
-//                   {escritura && (
-//                       <Tooltip content="Eliminar Persona">
-//                       <IconButton variant="text" color="blue-gray" >
-//                           <svg
-//                           xmlns="http://www.w3.org/2000/svg"
-//                           fill="none"
-//                           viewBox="0 0 24 24"
-//                           strokeWidth={1.5}
-//                           stroke="currentColor"
-//                           className="w-6 h-6"
-//                           >
-//                           {/* ... Icono de eliminar */}
-//                           </svg>
-//                       </IconButton>
-//                       </Tooltip>
-//                   )}
-//                   {lectura && (
-//                       <Tooltip content="Ver Persona">
-//                       <IconButton variant="text" color="blue-gray">
-//                           <HiEye className="h-4 w-4" />
-//                       </IconButton>
-//                       </Tooltip>
-//                   )}
-//                   </td>
-//               </tr>
-//                       ))}
-//                   </tr>
-//                   ))}
-//                   </tbody>
