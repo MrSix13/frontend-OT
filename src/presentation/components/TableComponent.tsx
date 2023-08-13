@@ -11,16 +11,22 @@ import { HiEye } from "react-icons/hi";
 import { usePermission } from "../hooks";
 
 interface ITableComponentProps {
-  tableHead?: { cell: string; key: string; visible: boolean }[];
+  tableHead?: { cell: JSX.Element | string; key: string; visible: boolean }[];
   data?: React.Dispatch<React.SetStateAction<any[]>>;
   renderButtons?: (item: any) => React.ReactNode;
+  handleSelectChecked?: (id: number) => void;
+  handleSelectedCheckedAll?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  selectedIds: number[];
   entidad: string
 }
 
 const TableComponent: React.FC<ITableComponentProps> = ({
   tableHead,
   data,
-  entidad
+  entidad,
+  handleSelectChecked,
+  handleSelectedCheckedAll,
+  selectedIds
 }) => {
   const { escritura, lectura } = usePermission();
 
@@ -38,7 +44,7 @@ const TableComponent: React.FC<ITableComponentProps> = ({
                   className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 "
                 >
                   {column.key === "checkbox" ? (
-                    <input className="hidden-input" type="checkbox" />
+                    <input className="hidden-input" type="checkbox" onChange={handleSelectedCheckedAll} />
                   ) : (
                     <Typography
                       variant="small"
@@ -56,6 +62,7 @@ const TableComponent: React.FC<ITableComponentProps> = ({
       <tbody>
         {data &&
           data.map((rowData, rowIndex) => {
+            const id = rowData[1]
             return (
               <tr key={rowIndex}>
                 {rowData.map((row, index) => {
@@ -64,7 +71,7 @@ const TableComponent: React.FC<ITableComponentProps> = ({
                     visible2 && (
                       <td className="border-b-4 px-4 py-2" key={index}>
                         {index === 0 ? (
-                          <input type="checkbox" name="" id="" />
+                          <input checked={selectedIds.includes(id)} onChange={() => handleSelectChecked(id)} type="checkbox" name="" id="" />
                         ) : (
                           <Typography
                             variant="small"

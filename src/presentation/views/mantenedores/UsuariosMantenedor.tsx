@@ -10,7 +10,25 @@ function UsuariosMantenedor() {
   const [usuarios, setUsuarios] = useState([]);
 
 
-  const { entities, setEntities, isModalOpen, openModal, closeModal } = useEntityUtils("/api/usuarios/", "01");
+  const {
+    //entities state
+    entities,
+    setEntities,
+    //modal methods
+    isModalOpen,
+    openModal,
+    closeModal,
+    //Check methods
+    handleSelect,
+    selectedIds,
+    handleSelectedAll,
+    //primary buttons methods
+    handleDeleteAll
+  } = useEntityUtils("/api/usuarios/", "01");
+
+
+  //check id
+  console.log('selectedIDs', selectedIds)
 
   const handleChange = (data) => {
     console.log('data', data)
@@ -36,10 +54,8 @@ function UsuariosMantenedor() {
     [1, 3, 'Diego', '+56988771100', 'diego@gmail.com', 'Activo', 3, 'Empleado'],
   ];
 
-  // Puedes acceder a los valores de los usuarios por índice, por ejemplo: usuarios[0] para el primer usuario
 
 
-  // Puedes acceder a los usuarios por índice, por ejemplo: usuarios[0] para el primer usuario
 
   console.log("state", usuariosJson);
 
@@ -60,6 +76,7 @@ function UsuariosMantenedor() {
 
         <PrimaryButtonsComponent
           handleAddPerson={openModal}
+          handleDeleteAll={handleDeleteAll}
           showAddButton={true}
           showExportButton={true}
           showDeleteButton={true}
@@ -69,7 +86,14 @@ function UsuariosMantenedor() {
       </div>
 
       <div>
-        <TableComponent entidad="Usuario" data={usuariosJson} tableHead={table_head_usuarios} />
+        <TableComponent
+          handleSelectChecked={handleSelect}
+          handleSelectedCheckedAll={handleSelectedAll}
+          selectedIds={selectedIds}
+          entidad="Usuario"
+          data={usuariosJson}
+          tableHead={table_head_usuarios}
+        />
       </div>
 
       {isModalOpen && <UserForm handleChange={handleChange} closeModal={closeModal} />}
