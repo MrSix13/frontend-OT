@@ -25,7 +25,7 @@ const TableComponent: React.FC<ITableComponentProps> = ({
   const { escritura, lectura } = usePermission();
 
   return (
-    <table className="mt-4 w-full min-w-max table-fixed text-left">
+    <table className="border border-l-2 border-r-2 mx-10 mt-10 w-full min-w-max table-fixed px-2 text-center">
       <thead>
         <tr>
           {tableHead &&
