@@ -63,11 +63,11 @@ const useCrud = (
   };
 
   const editEntity = async (
-    id: number,
+    // id: number,
     entityData: any
   ): Promise<any | undefined> => {
     try {
-      const response = await axiosInstance.patch(`/${id}/`, entityData);
+      const response = await axiosInstance.post(`/editar/`, entityData);
       const updateEntity = response.data;
       return updateEntity;
     } catch (error) {
@@ -80,11 +80,9 @@ const useCrud = (
       // POST
       // http://127.0.0.1:8000/api/personas/eliminar/
       // "idDelete":77
-      const isDelete = {
-        idDelete: id,
-      };
-      console.log(isDelete);
-      const response = await axiosInstance.post("/eliminar/", isDelete);
+      const response = await axiosInstance.delete(
+        `/eliminar/?_p1=${id}&query=05`
+      );
       return response.data;
     } catch (error) {
       console.log(error);
@@ -93,13 +91,17 @@ const useCrud = (
 
   const deleteAllEntity = async (id: number[]): Promise<void> => {
     try {
-      const isDelete = {
-        idsDelete: id,
-      };
-      const response = await axiosInstance.post("/eliminar/all/", isDelete);
+      // const isDelete = {
+      //   idsDelete: id,
+      // };
+      const idsDelete = id.join(",");
+      const response = await axiosInstance.delete(
+        `/eliminar/?_p1=${idsDelete}&query=05`
+      );
       return response.data;
     } catch (error) {
-      console.log(error);
+      console.log("deleteError", error.response.data.error);
+      return error;
     }
   };
 

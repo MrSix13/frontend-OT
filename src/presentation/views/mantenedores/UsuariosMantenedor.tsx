@@ -2,75 +2,88 @@ import React, { useState } from "react";
 import PrimaryKeySearch from "../../components/PrimaryKeySearch";
 import { PrimaryButtonsComponent } from "../../components";
 import TableComponent from "../../components/TableComponent";
-import { useEntityUtils } from "../../hooks";
+import { useCrud, useEntityUtils } from "../../hooks";
 import { table_head_usuarios } from "../../utils/table_head_utils";
-import UserForm from "../forms/UserForm";
+import UserForm, {
+  transformInsertQuery,
+  transformUpdateQuery,
+} from "../forms/UserForm";
 import PermisosMantenedor from "./PermisosMantenedor";
+import { toast } from "react-toastify";
 
 function UsuariosMantenedor() {
   const [usuarios, setUsuarios] = useState([]);
 
+  const { createdEntity, editEntity } = useCrud("/api/usuarios/");
 
   const {
     //entities state
     entities,
     setEntities,
+    entity,
+    entityID,
     //modal methods
     isModalOpen,
     isModalEdit,
     toggleEditModal,
     openModal,
     closeModal,
+    setOnDelete,
     //Check methods
     handleSelect,
     selectedIds,
+    setSelectedIds,
     handleSelectedAll,
     //primary buttons methods
-    handleDeleteAll
+    handleDeleteAll,
+    handleDelete,
   } = useEntityUtils("/api/usuarios/", "01");
 
-
   //check id
-  console.log('selectedIDs', selectedIds)
+  console.log("selectedIDs", selectedIds);
+  // console.log("entity", entity);
+  // console.log("togleEdit", isModalEdit);
 
-  const handleChange = (data) => {
-    console.log('data', data)
-  }
-  const usuariosJson = [
-    [1, 1, 'Carlos', '+569112233444', 'carlos@gmail.com', 'Activo', 2, 'Gerente'],
-    [1, 2, 'Sandra', '+56922334455', 'sandra@gmail.com', 'Suspendido', 1, 'Supervisor'],
-    [1, 3, 'Diego', '+56988771100', 'diego@gmail.com', 'Activo', 3, 'Empleado'],
-    [1, 1, 'Carlos', '+569112233444', 'carlos@gmail.com', 'Activo', 2, 'Gerente'],
-    [1, 2, 'Sandra', '+56922334455', 'sandra@gmail.com', 'Suspendido', 1, 'Supervisor'],
-    [1, 3, 'Diego', '+56988771100', 'diego@gmail.com', 'Activo', 3, 'Empleado'],
-    [1, 1, 'Carlos', '+569112233444', 'carlos@gmail.com', 'Activo', 2, 'Gerente'],
-    [1, 2, 'Sandra', '+56922334455', 'sandra@gmail.com', 'Suspendido', 1, 'Supervisor'],
-    [1, 3, 'Diego', '+56988771100', 'diego@gmail.com', 'Activo', 3, 'Empleado'],
-    [1, 1, 'Carlos', '+569112233444', 'carlos@gmail.com', 'Activo', 2, 'Gerente'],
-    [1, 2, 'Sandra', '+56922334455', 'sandra@gmail.com', 'Suspendido', 1, 'Supervisor'],
-    [1, 3, 'Diego', '+56988771100', 'diego@gmail.com', 'Activo', 3, 'Empleado'],
-    [1, 1, 'Carlos', '+569112233444', 'carlos@gmail.com', 'Activo', 2, 'Gerente'],
-    [1, 2, 'Sandra', '+56922334455', 'sandra@gmail.com', 'Suspendido', 1, 'Supervisor'],
-    [1, 3, 'Diego', '+56988771100', 'diego@gmail.com', 'Activo', 3, 'Empleado'],
-    [1, 1, 'Carlos', '+569112233444', 'carlos@gmail.com', 'Activo', 2, 'Gerente'],
-    [1, 2, 'Sandra', '+56922334455', 'sandra@gmail.com', 'Suspendido', 1, 'Supervisor'],
-    [1, 3, 'Diego', '+56988771100', 'diego@gmail.com', 'Activo', 3, 'Empleado'],
-  ];
+  //COMBINAR LOGICA
+  const handleChange = async (data) => {
+    try {
+      const createData = transformInsertQuery(data);
+      await createdEntity(createData);
+      closeModal();
+      setEntities([]);
+      setOnDelete((prev) => !prev);
+      toast.success("Usuario creado correctamente");
+    } catch (error) {
+      toast.error(error);
+      console.log("errorCrear", error);
+    }
+  };
 
-
-
-
-  console.log("state", usuariosJson);
+  const handleEditChange = async (data) => {
+    try {
+      const editData = transformUpdateQuery(data, entityID.toString());
+      console.log("editData", editData);
+      await editEntity(editData);
+      closeModal();
+      setEntities([]);
+      setOnDelete((prev) => !prev);
+      toast.success("Usuario editado correctamente");
+    } catch (error) {
+      console.log("error editar:", error);
+    }
+  };
 
   return (
     <div className="w-[95%] h-full">
-      <h1 className="text-center mt-5 font-bold text-2xl">Mantenedor de Usuarios</h1>
+      <h1 className="text-center mt-5 font-bold text-2xl">
+        Mantenedor de Usuarios
+      </h1>
 
       <div className="flex mt-5">
         <PrimaryKeySearch
           baseUrl="/api/usuarios"
           selectUrl="/api/cargos/"
-          setState={setUsuarios}
+          setState={setEntities}
           primaryKeyInputs={[
             { name: "_p1", label: "Nombre", type: "text" },
             { name: "_p2", label: "Cargos", type: "select" },
@@ -93,18 +106,49 @@ function UsuariosMantenedor() {
           handleSelectChecked={handleSelect}
           handleSelectedCheckedAll={handleSelectedAll}
           toggleEditModal={toggleEditModal}
+          handleDeleteAll={handleDeleteAll}
           selectedIds={selectedIds}
+          setSelectedIds={setSelectedIds}
           entidad="Usuario"
-          data={usuariosJson}
+          data={entities}
           tableHead={table_head_usuarios}
         />
       </div>
 
-      {isModalOpen && <UserForm label="Crear Usuario" handleChange={handleChange} closeModal={closeModal} />}
-      {/* {isModalOpen && <PermisosMantenedor closeModal={closeModal} />} */}
+      {isModalOpen && (
+        <UserForm
+          label="Crear Usuario"
+          handleChange={handleChange}
+          closeModal={closeModal}
+        />
+      )}
 
+      {isModalEdit && (
+        <UserForm
+          label="Editar Usuario"
+          handleChange={handleEditChange}
+          data={entity}
+          closeModal={closeModal}
+        />
+      )}
+
+      {/* {isModalOpen && <PermisosMantenedor closeModal={closeModal} />} */}
     </div>
   );
 }
 
 export default UsuariosMantenedor;
+
+// {
+//   nombre: "test";
+//   password1: "password";
+//   password2: "password";
+//   cargo: "1";
+//   telefono: "+56939422";
+//   correo: "correo@correo.cl";
+//   estado: "Activo";
+// }
+// {
+//   "query":"03",
+//   "_p1": " 'Sandra', '', 2, '+5692304', 'correo@correo.cl', 3 "
+// }

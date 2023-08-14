@@ -8,7 +8,6 @@ import { RiSettings3Fill } from "react-icons/ri";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import { HiEye } from "react-icons/hi";
 
-
 import { usePermission } from "../hooks";
 
 interface ITableComponentProps {
@@ -16,10 +15,14 @@ interface ITableComponentProps {
   data: React.Dispatch<React.SetStateAction<any[]>>;
   renderButtons?: (item: any) => React.ReactNode;
   handleSelectChecked?: (id: number) => void;
-  handleSelectedCheckedAll?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSelectedCheckedAll?: (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => void;
   toggleEditModal?: (id: number) => void;
+  handleDeleteAll?: (id: number) => void;
   selectedIds?: number[];
-  entidad: string
+  setSelectedIds?: React.Dispatch<React.SetStateAction<any[]>>;
+  entidad: string;
 }
 
 const TableComponent: React.FC<ITableComponentProps> = ({
@@ -29,7 +32,9 @@ const TableComponent: React.FC<ITableComponentProps> = ({
   handleSelectChecked,
   handleSelectedCheckedAll,
   toggleEditModal,
-  selectedIds
+  handleDeleteAll,
+  selectedIds,
+  setSelectedIds,
 }) => {
   const { escritura, lectura } = usePermission();
 
@@ -47,7 +52,11 @@ const TableComponent: React.FC<ITableComponentProps> = ({
                   className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 "
                 >
                   {column.key === "checkbox" ? (
-                    <input className="hidden-input" type="checkbox" onChange={handleSelectedCheckedAll} />
+                    <input
+                      className="hidden-input"
+                      type="checkbox"
+                      onChange={handleSelectedCheckedAll}
+                    />
                   ) : (
                     <Typography
                       variant="small"
@@ -65,7 +74,7 @@ const TableComponent: React.FC<ITableComponentProps> = ({
       <tbody>
         {data &&
           data.map((rowData, rowIndex) => {
-            const id = rowData[1]
+            const id = rowData[1];
             return (
               <tr key={rowIndex}>
                 {rowData.map((row, index) => {
@@ -74,7 +83,13 @@ const TableComponent: React.FC<ITableComponentProps> = ({
                     visible2 && (
                       <td className="border-b-4 px-4 py-2" key={index}>
                         {index === 0 ? (
-                          <input checked={selectedIds && selectedIds.includes(id)} onChange={() => handleSelectChecked(id)} type="checkbox" name="" id="" />
+                          <input
+                            checked={selectedIds && selectedIds.includes(id)}
+                            onChange={() => handleSelectChecked(id)}
+                            type="checkbox"
+                            name=""
+                            id=""
+                          />
                         ) : (
                           <Typography
                             variant="small"
@@ -103,13 +118,12 @@ const TableComponent: React.FC<ITableComponentProps> = ({
                     <></>
                   )}
 
-
                   {lectura && (
                     <Tooltip content={`ver ${entidad}`}>
                       <IconButton
                         variant="text"
                         color="blue-gray"
-                      // onClick={() => handleEntity(id)}
+                        // onClick={() => handleEntity(id)}
                       >
                         <HiEye className="h-4 w-4" />
                       </IconButton>
@@ -121,7 +135,7 @@ const TableComponent: React.FC<ITableComponentProps> = ({
                       <IconButton
                         variant="text"
                         color="blue-gray"
-                      // onClick={() => handleEntity(id)}
+                        // onClick={() => handleEntity(id)}
                       >
                         <RiSettings3Fill className="h-4 w-4" />
                       </IconButton>
@@ -133,7 +147,10 @@ const TableComponent: React.FC<ITableComponentProps> = ({
                       <IconButton
                         variant="text"
                         color="blue-gray"
-                      // onClick={() => handleDelete(id)}
+                        onClick={() => {
+                          setSelectedIds([id]);
+                          handleDeleteAll(id);
+                        }}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -154,7 +171,6 @@ const TableComponent: React.FC<ITableComponentProps> = ({
                   ) : (
                     <></>
                   )}
-
                 </td>
               </tr>
             );
@@ -165,4 +181,3 @@ const TableComponent: React.FC<ITableComponentProps> = ({
 };
 
 export default TableComponent;
-
