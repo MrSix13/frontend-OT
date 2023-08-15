@@ -9,10 +9,16 @@ import UserForm, {
   transformInsertQuery,
   transformUpdateQuery,
 } from "../forms/UserForm";
-import PermisosMantenedor from "./PermisosMantenedor";
 import { toast } from "react-toastify";
 
-function UsuariosMantenedor() {
+type UserData = [number, number, string, string, number, string, number];
+
+interface IUsuariosMantenedorProps {
+  userData: UserData;
+}
+
+
+const UsuariosMantenedor: React.FC<IUsuariosMantenedorProps> = () => {
   const { createdEntity, editEntity } = useCrud("/api/usuarios/");
 
   const {
@@ -70,7 +76,7 @@ function UsuariosMantenedor() {
         <PrimaryKeySearch
           baseUrl="/api/usuarios"
           selectUrl="/api/cargos/"
-          setState={setEntities}
+          setState={setEntities as React.Dispatch<React.SetStateAction<IUsuariosMantenedorProps[]>>}
           primaryKeyInputs={[
             { name: "_p1", label: "Nombre", type: "text" },
             { name: "_p2", label: "Cargos", type: "select" },

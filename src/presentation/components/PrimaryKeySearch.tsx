@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-floating-promises */
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
@@ -21,14 +18,15 @@ interface IPrimaryKeyState {
   [key: string]: string | number;
 }
 
-interface PrimaryKeySearchProps {
-  setState: React.Dispatch<React.SetStateAction<any[]>>;
+
+interface PrimaryKeySearchProps<T> {
+  setState: React.Dispatch<React.SetStateAction<T[]>>;
   primaryKeyInputs: { label: string; type: string; name: string; options?: string[] }[];
   baseUrl: string;
   selectUrl: string;
 }
 
-const PrimaryKeySearch: React.FC<PrimaryKeySearchProps> = ({
+const PrimaryKeySearch: React.FC<PrimaryKeySearchProps<any>> = ({
   setState,
   primaryKeyInputs,
   baseUrl,

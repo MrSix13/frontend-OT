@@ -1,7 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import React from "react";
 import { IconButton, Tooltip, Typography } from "@material-tailwind/react";
 import { RiSettings3Fill } from "react-icons/ri";
@@ -10,9 +7,9 @@ import { HiEye } from "react-icons/hi";
 
 import { usePermission } from "../hooks";
 
-interface ITableComponentProps {
+interface ITableComponentProps<T> {
   tableHead: { cell: JSX.Element | string; key: string; visible: boolean }[];
-  data: React.Dispatch<React.SetStateAction<any[]>>;
+  data: T[];
   renderButtons?: (item: any) => React.ReactNode;
   handleSelectChecked?: (id: number) => void;
   handleSelectedCheckedAll?: (
@@ -25,7 +22,7 @@ interface ITableComponentProps {
   entidad: string;
 }
 
-const TableComponent: React.FC<ITableComponentProps> = ({
+const TableComponent: React.FC<ITableComponentProps<any>> = ({
   tableHead,
   data,
   entidad,
@@ -51,7 +48,7 @@ const TableComponent: React.FC<ITableComponentProps> = ({
   const renderCheckboxCell = (id: number) => (
     <input
       checked={selectedIds && selectedIds.includes(id)}
-      onChange={() => handleSelectChecked(id)}
+      onChange={() => handleSelectChecked && handleSelectChecked(id)}
       type="checkbox"
     />
   );
@@ -85,11 +82,11 @@ const TableComponent: React.FC<ITableComponentProps> = ({
       </thead>
       <tbody>
         {data &&
-          data.map((rowData, rowIndex) => {
+          data.map((rowData: any, rowIndex: number) => {
             const id = rowData[1];
             return (
               <tr key={rowIndex}>
-                {rowData.map((row, index) => {
+                {rowData.map((row: any, index: number) => {
                   const visible = tableHead && tableHead[index].visible;
                   return (
                     visible && (
@@ -107,7 +104,7 @@ const TableComponent: React.FC<ITableComponentProps> = ({
                       <IconButton
                         variant="text"
                         color="blue-gray"
-                        onClick={() => toggleEditModal(id)}
+                        onClick={() => toggleEditModal && toggleEditModal(id)}
                       >
                         <PencilIcon className="h-4 w-4" />
                       </IconButton>
@@ -144,8 +141,8 @@ const TableComponent: React.FC<ITableComponentProps> = ({
                         variant="text"
                         color="blue-gray"
                         onClick={() => {
-                          setSelectedIds([id]);
-                          handleDeleteAll(id);
+                          setSelectedIds && setSelectedIds([id]);
+                          handleDeleteAll && handleDeleteAll(id);
                         }}
                       >
                         <svg
