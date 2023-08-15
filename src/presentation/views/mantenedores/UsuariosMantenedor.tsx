@@ -5,6 +5,7 @@ import TableComponent from "../../components/TableComponent";
 import { useCrud, useEntityUtils } from "../../hooks";
 import { table_head_usuarios } from "../../utils/table_head_utils";
 import UserForm, {
+  IUserInputData,
   transformInsertQuery,
   transformUpdateQuery,
 } from "../forms/UserForm";
@@ -12,8 +13,6 @@ import PermisosMantenedor from "./PermisosMantenedor";
 import { toast } from "react-toastify";
 
 function UsuariosMantenedor() {
-  const [usuarios, setUsuarios] = useState([]);
-
   const { createdEntity, editEntity } = useCrud("/api/usuarios/");
 
   const {
@@ -21,7 +20,6 @@ function UsuariosMantenedor() {
     entities,
     setEntities,
     entity,
-    entityID,
     //modal methods
     isModalOpen,
     isModalEdit,
@@ -36,42 +34,31 @@ function UsuariosMantenedor() {
     handleSelectedAll,
     //primary buttons methods
     handleDeleteAll,
-    handleDelete,
   } = useEntityUtils("/api/usuarios/", "01");
 
-  //check id
-  console.log("selectedIDs", selectedIds);
-  // console.log("entity", entity);
-  // console.log("togleEdit", isModalEdit);
-
-  //COMBINAR LOGICA
-  const handleChange = async (data) => {
+  const handleSaveChange = async (data: IUserInputData, isEditting: boolean) => {
     try {
-      const createData = transformInsertQuery(data);
-      await createdEntity(createData);
+      console.log('editting', isEditting)
+      const transformedData = isEditting
+        ? transformUpdateQuery(data, selectedIds.toString())
+        : transformInsertQuery(data);
+
+      if (isEditting) {
+        await editEntity(transformedData)
+      } else {
+        await createdEntity(transformedData)
+      }
+
+      toast.success(isEditting ? "Usuario editado correctamente" : "Usuario Creado Correctamente")
+
       closeModal();
       setEntities([]);
-      setOnDelete((prev) => !prev);
-      toast.success("Usuario creado correctamente");
+      setOnDelete((prev) => !prev)
     } catch (error) {
-      toast.error(error);
-      console.log("errorCrear", error);
+      toast.error(error)
+      console.log('error:', error)
     }
-  };
-
-  const handleEditChange = async (data) => {
-    try {
-      const editData = transformUpdateQuery(data, entityID.toString());
-      console.log("editData", editData);
-      await editEntity(editData);
-      closeModal();
-      setEntities([]);
-      setOnDelete((prev) => !prev);
-      toast.success("Usuario editado correctamente");
-    } catch (error) {
-      console.log("error editar:", error);
-    }
-  };
+  }
 
   return (
     <div className="w-[95%] h-full">
@@ -118,17 +105,19 @@ function UsuariosMantenedor() {
       {isModalOpen && (
         <UserForm
           label="Crear Usuario"
-          handleChange={handleChange}
+          handleChange={(data) => handleSaveChange(data, false)}
           closeModal={closeModal}
+          isEditting={false}
         />
       )}
 
       {isModalEdit && (
         <UserForm
           label="Editar Usuario"
-          handleChange={handleEditChange}
+          handleChange={(data) => handleSaveChange(data, true)}
           data={entity}
           closeModal={closeModal}
+          isEditting={true}
         />
       )}
 
@@ -139,16 +128,32 @@ function UsuariosMantenedor() {
 
 export default UsuariosMantenedor;
 
-// {
-//   nombre: "test";
-//   password1: "password";
-//   password2: "password";
-//   cargo: "1";
-//   telefono: "+56939422";
-//   correo: "correo@correo.cl";
-//   estado: "Activo";
-// }
-// {
-//   "query":"03",
-//   "_p1": " 'Sandra', '', 2, '+5692304', 'correo@correo.cl', 3 "
-// }
+
+// //COMBINAR LOGICA
+// const handleChange = async (data) => {
+//   try {
+//     const createData = transformInsertQuery(data);
+//     await createdEntity(createData);
+//     closeModal();
+//     setEntities([]);
+//     setOnDelete((prev) => !prev);
+//     toast.success("Usuario creado correctamente");
+//   } catch (error) {
+//     toast.error(error);
+//     console.log("errorCrear", error);
+//   }
+// };
+
+// const handleEditChange = async (data) => {
+//   try {
+//     const editData = transformUpdateQuery(data, entityID.toString());
+//     console.log("editData", editData);
+//     await editEntity(editData);
+//     closeModal();
+//     setEntities([]);
+//     setOnDelete((prev) => !prev);
+//     toast.success("Usuario editado correctamente");
+//   } catch (error) {
+//     console.log("error editar:", error);
+//   }
+// };

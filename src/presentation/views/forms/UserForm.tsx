@@ -7,7 +7,7 @@ import {
 import { useForm } from "react-hook-form";
 import { useEntityUtils } from "../../hooks";
 
-interface InputData {
+export interface IUserInputData {
   nombre: string;
   password1: string;
   password2: string;
@@ -23,14 +23,13 @@ interface OutputData {
   _p3?: string;
 }
 
-export function transformInsertQuery(jsonData: InputData): OutputData | null {
+export function transformInsertQuery(jsonData: IUserInputData): OutputData | null {
   if (jsonData.password1 !== jsonData.password2) {
     alert("Las contraseñas no coinciden");
   }
 
-  const _p1 = `'${jsonData.nombre}', '', ${jsonData.cargo}, '${
-    jsonData.telefono
-  }', '${jsonData.correo}', ${jsonData.estado === "Activo" ? 1 : 2}`;
+  const _p1 = `'${jsonData.nombre}', '', ${jsonData.cargo}, '${jsonData.telefono
+    }', '${jsonData.correo}', ${jsonData.estado === "Activo" ? 1 : 2}`;
 
   const query: OutputData = {
     query: "03",
@@ -39,11 +38,7 @@ export function transformInsertQuery(jsonData: InputData): OutputData | null {
 
   return query;
 }
-
-export function transformUpdateQuery(
-  jsonData: InputData,
-  primaryKey: string
-): OutputData | null {
+export function transformUpdateQuery(jsonData: IUserInputData, primaryKey: string): OutputData | null {
   const fields = [
     jsonData.nombre && `nombre='${jsonData.nombre}'`,
     jsonData.telefono && `telefono='${jsonData.telefono}'`,
@@ -53,30 +48,60 @@ export function transformUpdateQuery(
     jsonData.password1 && `password='${jsonData.password1}'`,
   ];
 
-  const filteredFields = fields.filter(
-    (field) => field !== null && field !== ""
-  ) as string[];
-  console.log("filteredField", filteredFields);
+  const filteredFields = fields.filter(field => field !== null && field !== "");
+
   if (filteredFields.length === 0) {
     return null;
   }
 
   const _p3 = filteredFields.join(",");
 
-  const query: OutputData = {
+  return {
     query: "04",
     _p1: primaryKey,
     _p3,
   };
-
-  return query;
 }
+
+
+// export function transformUpdateQuery(
+//   jsonData: IUserInputData,
+//   primaryKey: string
+// ): OutputData | null {
+//   const fields = [
+//     jsonData.nombre && `nombre='${jsonData.nombre}'`,
+//     jsonData.telefono && `telefono='${jsonData.telefono}'`,
+//     jsonData.correo && `correo='${jsonData.correo}'`,
+//     jsonData.estado && `estado=${jsonData.estado === "Activo" ? 1 : 2}`,
+//     jsonData.cargo && `cargo=${jsonData.cargo}`,
+//     jsonData.password1 && `password='${jsonData.password1}'`,
+//   ];
+
+//   const filteredFields = fields.filter(
+//     (field) => field !== null && field !== ""
+//   );
+//   console.log("filteredField", filteredFields);
+//   if (filteredFields.length === 0) {
+//     return null;
+//   }
+
+//   const _p3 = filteredFields.join(",");
+
+//   const query: OutputData = {
+//     query: "04",
+//     _p1: primaryKey,
+//     _p3,
+//   };
+
+//   return query;
+// }
 
 interface IUserFormPrps {
   closeModal: () => void;
-  handleChange?: (data: any, id?) => void;
+  handleChange?: (data: any, isEditting: boolean) => void;
   data?: any[];
   label: string;
+  isEditting?: boolean;
 }
 
 const UserForm: React.FC<IUserFormPrps> = ({
@@ -84,8 +109,11 @@ const UserForm: React.FC<IUserFormPrps> = ({
   handleChange,
   label,
   data,
+  isEditting
 }) => {
   const { control, handleSubmit } = useForm();
+  console.log("isEditting:", isEditting);
+
   const { entities } = useEntityUtils("/api/cargos/", "02");
   console.log("cargos:", entities);
   return (

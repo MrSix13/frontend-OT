@@ -38,6 +38,24 @@ const TableComponent: React.FC<ITableComponentProps> = ({
 }) => {
   const { escritura, lectura } = usePermission();
 
+  const renderTextCell = (text: string) => (
+    <Typography
+      variant="small"
+      color="blue-gray"
+      className="font-bold text-lg leading-none opacity-70"
+    >
+      {text || ""}
+    </Typography>
+  )
+
+  const renderCheckboxCell = (id: number) => (
+    <input
+      checked={selectedIds && selectedIds.includes(id)}
+      onChange={() => handleSelectChecked(id)}
+      type="checkbox"
+    />
+  );
+
   return (
     <table className="border border-l-2 border-r-2 mx-10 mt-10 w-full min-w-max table-fixed px-2 text-center">
       <thead>
@@ -58,13 +76,7 @@ const TableComponent: React.FC<ITableComponentProps> = ({
                       onChange={handleSelectedCheckedAll}
                     />
                   ) : (
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-bold text-lg leading-none opacity-70"
-                    >
-                      {column.cell}
-                    </Typography>
+                    renderTextCell(column.cell as string)
                   )}
                 </th>
               ) : null;
@@ -78,33 +90,19 @@ const TableComponent: React.FC<ITableComponentProps> = ({
             return (
               <tr key={rowIndex}>
                 {rowData.map((row, index) => {
-                  const visible2 = tableHead && tableHead[index].visible;
+                  const visible = tableHead && tableHead[index].visible;
                   return (
-                    visible2 && (
+                    visible && (
                       <td className="border-b-4 px-4 py-2" key={index}>
-                        {index === 0 ? (
-                          <input
-                            checked={selectedIds && selectedIds.includes(id)}
-                            onChange={() => handleSelectChecked(id)}
-                            type="checkbox"
-                            name=""
-                            id=""
-                          />
-                        ) : (
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal text-sm"
-                          >
-                            {row || ""}
-                          </Typography>
-                        )}
+                        {index === 0 ? renderCheckboxCell(id) : renderCheckboxCell(row)}
                       </td>
                     )
                   );
                 })}
                 <td>
-                  {escritura ? (
+
+                  {/* ===========BOTONES DE TABLA============ */}
+                  {escritura && (
                     <Tooltip content={`Editar ${entidad}`}>
                       <IconButton
                         variant="text"
@@ -114,8 +112,6 @@ const TableComponent: React.FC<ITableComponentProps> = ({
                         <PencilIcon className="h-4 w-4" />
                       </IconButton>
                     </Tooltip>
-                  ) : (
-                    <></>
                   )}
 
                   {lectura && (
@@ -123,7 +119,7 @@ const TableComponent: React.FC<ITableComponentProps> = ({
                       <IconButton
                         variant="text"
                         color="blue-gray"
-                        // onClick={() => handleEntity(id)}
+                      // onClick={() => handleEntity(id)}
                       >
                         <HiEye className="h-4 w-4" />
                       </IconButton>
@@ -135,7 +131,7 @@ const TableComponent: React.FC<ITableComponentProps> = ({
                       <IconButton
                         variant="text"
                         color="blue-gray"
-                        // onClick={() => handleEntity(id)}
+                      // onClick={() => handleEntity(id)}
                       >
                         <RiSettings3Fill className="h-4 w-4" />
                       </IconButton>
