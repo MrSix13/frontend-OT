@@ -1,155 +1,168 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import Draggable,{DraggableData, DraggableEvent} from 'react-draggable';
-import { FormContext } from '../../utils/FormProvider';
+import React, { useState, useEffect, useContext } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import Draggable, { DraggableData, DraggableEvent } from "react-draggable";
+import { FormContext } from "../../utils/FormProvider";
 
-import { getRegionesRepository,getProvinciasRepository,getComunasRepository } from '../../../domain/repositories/personasRepository';
-import { IPerson, IProvincias, IRegiones, IComunas } from '../../../interfaces';
-import { useAppDispatch, useAppSelector } from '../../../redux/sotre';
-import SelectInputComponent from '../../components/forms/SelectInputComponent';
-import { CheckInputComponent, DateInputComponent, RadioButtonComponent, TextInputComponent } from '../../components';
+import {
+  getRegionesRepository,
+  getProvinciasRepository,
+  getComunasRepository,
+} from "../../../domain/repositories/personasRepository";
+import { IPerson, IProvincias, IRegiones, IComunas } from "../../../interfaces";
+import { useAppDispatch, useAppSelector } from "../../../redux/store";
+import SelectInputComponent from "../../components/forms/SelectInputComponent";
+import {
+  CheckInputComponent,
+  DateInputComponent,
+  RadioButtonComponent,
+  TextInputComponent,
+} from "../../components";
 
-interface FormModalProps{
-  label?:string;
+interface FormModalProps {
+  label?: string;
   required?: boolean;
   isOpen?: boolean;
-  onlyRead?:boolean;
-  data?:IPerson | null;
+  onlyRead?: boolean;
+  data?: IPerson | null;
   closeModal?: () => void;
-  handleChange?: (data:IPerson) => void;
-  hanldeInputChange?: (data:IPerson) => void;
+  handleChange?: (data: IPerson) => void;
+  hanldeInputChange?: (data: IPerson) => void;
 }
 
 type Position = {
-  xRate:number;
-  yRate:number;
-}
+  xRate: number;
+  yRate: number;
+};
 
 const FormularioView: React.FC<FormModalProps> = ({
-  isOpen, 
-  closeModal, 
+  isOpen,
+  closeModal,
   handleChange,
-  label, 
-  required, 
+  label,
+  required,
   data,
   hanldeInputChange,
-  onlyRead
+  onlyRead,
 }) => {
-  const [regions, setRegions] = useState<IRegiones[]>([])
-  const [provincias, setProvincias] = useState<IProvincias[]>([])
-  const [comunas, setComunas] = useState<IComunas[]>([])
+  const [regions, setRegions] = useState<IRegiones[]>([]);
+  const [provincias, setProvincias] = useState<IProvincias[]>([]);
+  const [comunas, setComunas] = useState<IComunas[]>([]);
   const [currentPosition, setCurrenPosition] = useState<Position>({
-    xRate:20,
-    yRate:-window.innerHeight
-  })
-  const [selectedRegion, setSelectedRegion] = useState<string>('')
-  const [selectedProvincia, setSelectedProvincia] = useState<string>('')
-  const [selectedComuna, setSelectedComuna] = useState<string>('')
+    xRate: 20,
+    yRate: -window.innerHeight,
+  });
+  const [selectedRegion, setSelectedRegion] = useState<string>("");
+  const [selectedProvincia, setSelectedProvincia] = useState<string>("");
+  const [selectedComuna, setSelectedComuna] = useState<string>("");
   const [toggle, setIsToggle] = useState<boolean>(true);
   const [formData, setFormData] = useState<IPerson | null>(data);
 
-
-  const { register,control, handleSubmit, formState: { errors } } = useForm<IPerson>();
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IPerson>();
 
   const onDrag = (_e: DraggableEvent, data: DraggableData) => {
     setCurrenPosition({ xRate: data.lastX, yRate: data.lastY });
   };
   const dominioIngles = [
     {
-      id:1,
-      nombre:'Basico'
+      id: 1,
+      nombre: "Basico",
     },
     {
-      id:2,
-      nombre:'Medio'
+      id: 2,
+      nombre: "Medio",
     },
     {
-      id:3,
-      nombre:'Avanzado'
+      id: 3,
+      nombre: "Avanzado",
     },
     {
-      id:4,
-      nombre:'Nativo'
+      id: 4,
+      nombre: "Nativo",
     },
-  ]
-  useEffect(()=>{
-     setFormData(data ? data : null);
-  },[data])
+  ];
+  useEffect(() => {
+    setFormData(data ? data : null);
+  }, [data]);
 
   //LLamar a las regiones
-  useEffect(()=>{
-      getRegionesRepository()
-          .then((regiones)=>{
-            setRegions(regiones)
-          })
-          .catch((errors)=>{
-            console.log(errors)
-          })
-  },[])
+  useEffect(() => {
+    getRegionesRepository()
+      .then((regiones) => {
+        setRegions(regiones);
+      })
+      .catch((errors) => {
+        console.log(errors);
+      });
+  }, []);
 
   // LLamar a las provincias por region id
-  useEffect(()=>{
-    if(selectedRegion){
-        getProvinciasRepository(selectedRegion)
-          .then((provincias)=>{
-            setProvincias(provincias)
-          })
-          .catch((errors)=>{
-            console.log(errors)
-          })
+  useEffect(() => {
+    if (selectedRegion) {
+      getProvinciasRepository(selectedRegion)
+        .then((provincias) => {
+          setProvincias(provincias);
+        })
+        .catch((errors) => {
+          console.log(errors);
+        });
     }
-  },[selectedRegion])
+  }, [selectedRegion]);
   //LLaar a las comunas por Provincias id
-  useEffect(()=>{
-      if(selectedProvincia){
-        getComunasRepository(selectedProvincia)
-            .then((comuna)=>{
-              setComunas(comuna)
-            })
-            .catch((errors)=>{
-              console.log(errors)
-            })
-      }
-  },[selectedProvincia])
+  useEffect(() => {
+    if (selectedProvincia) {
+      getComunasRepository(selectedProvincia)
+        .then((comuna) => {
+          setComunas(comuna);
+        })
+        .catch((errors) => {
+          console.log(errors);
+        });
+    }
+  }, [selectedProvincia]);
   // const windowWidth = window.innerWidth;
   //   const windowHeight = window.innerHeight;
-  const handleRegionChange = (value:string) => {
-    setSelectedRegion(value)
-  }
-  const handleProvinciaChange = (value:string) => {
-    setSelectedProvincia(value)
-  }
-  const handleComunaChange = (value:string) => {
-    setSelectedComuna(value)
-  }
-  console.log('form data', formData)
-  console.log('data', data)
+  const handleRegionChange = (value: string) => {
+    setSelectedRegion(value);
+  };
+  const handleProvinciaChange = (value: string) => {
+    setSelectedProvincia(value);
+  };
+  const handleComunaChange = (value: string) => {
+    setSelectedComuna(value);
+  };
+  console.log("form data", formData);
+  console.log("data", data);
   return (
     <>
-    
       {isOpen && (
+        <Draggable
+          onDrag={onDrag}
+          position={{
+            x: currentPosition.xRate,
+            y: currentPosition.yRate,
+          }}
+          handle=".draggable-handle"
+        >
+          <div className="custom-draggable draggable-handle bg-white max-w-md mx-auto shadow-2xl">
+            <div className="">
+              <h1 className="text-center mb-4">{label}</h1>
+              <div className=" flex justify-between">
+                <button onClick={() => setIsToggle(!toggle)}>Help</button>
+                <button onClick={closeModal}>Close</button>
+              </div>
+            </div>
 
-          <Draggable 
-               onDrag={onDrag} 
-               position={{
-                x: currentPosition.xRate,
-                y:currentPosition.yRate
-               }}
-               handle='.draggable-handle'>
-                <div className="custom-draggable draggable-handle bg-white max-w-md mx-auto shadow-2xl">
-                  <div className=''>
-                      <h1 className="text-center mb-4">{label}</h1>
-                      <div className=' flex justify-between'>
-                        <button onClick={() => setIsToggle(!toggle)}>Help</button>
-                        <button onClick={closeModal}>Close</button>
-                      </div>
-                  </div>
-                  
-
-                  <form onSubmit={handleSubmit(handleChange)} className="bg-white shadow-md rounded px-8 pt-2 pb-4 mb-2">
-                    
-                      {/* Rut */}
-                    {/* <div className="flex items-center mb-2">
+            <form
+              onSubmit={handleSubmit(handleChange)}
+              className="bg-white shadow-md rounded px-8 pt-2 pb-4 mb-2"
+            >
+              {/* Rut */}
+              {/* <div className="flex items-center mb-2">
                       <label htmlFor="rut" className="text-gray-700 text-sm font-bold w-1/3">
                         Rut
                       </label>
@@ -164,18 +177,18 @@ const FormularioView: React.FC<FormModalProps> = ({
                         {...register('rut', { required: required })}
                       />
                     </div> */}
-                    <TextInputComponent 
-                        label='Rut' 
-                        type='text' 
-                        defaultValue='' 
-                        control={control}
-                        name="rut"
-                        required={false}
-                        data={formData?.rut || ""}
-                      />
-                  
-                      {/* Nombre */}
-                    {/* <div className="flex items-center mb-2">
+              <TextInputComponent
+                label="Rut"
+                type="text"
+                defaultValue=""
+                control={control}
+                name="rut"
+                required={false}
+                data={formData?.rut || ""}
+              />
+
+              {/* Nombre */}
+              {/* <div className="flex items-center mb-2">
                       <label htmlFor="nombre" className="text-gray-700 text-sm font-bold w-1/3">
                         Nombre
                       </label>
@@ -190,17 +203,17 @@ const FormularioView: React.FC<FormModalProps> = ({
                       />
                     </div> */}
 
-                    <TextInputComponent 
-                      label='Nombre' 
-                      type='text' 
-                      defaultValue='' 
-                      control={control}
-                      name="nombre"
-                      data={formData?.nombre || ""}
-                      />
+              <TextInputComponent
+                label="Nombre"
+                type="text"
+                defaultValue=""
+                control={control}
+                name="nombre"
+                data={formData?.nombre || ""}
+              />
 
-                      {/* Direccion */}
-                    {/* <div className="flex items-center mb-2">
+              {/* Direccion */}
+              {/* <div className="flex items-center mb-2">
                       <label htmlFor="direccion" className="text-gray-700 text-sm font-bold w-1/3">
                         Dirección
                       </label>
@@ -215,20 +228,17 @@ const FormularioView: React.FC<FormModalProps> = ({
                       />
                     </div> */}
 
-                    <TextInputComponent 
-                      label='Direccion' 
-                      type='text' 
-                      defaultValue='' 
-                      control={control}
-                      name="direccion"
-                      data={formData?.direccion || ""}
-                      />
+              <TextInputComponent
+                label="Direccion"
+                type="text"
+                defaultValue=""
+                control={control}
+                name="direccion"
+                data={formData?.direccion || ""}
+              />
 
-
-
-
-                      {/* Region */}
-                    {/* <div className="flex items-center mb-2">
+              {/* Region */}
+              {/* <div className="flex items-center mb-2">
                       <label htmlFor="regiones" className="text-gray-700 text-sm font-bold w-1/3">
                         Región
                       </label>
@@ -244,20 +254,18 @@ const FormularioView: React.FC<FormModalProps> = ({
                         ))}
                       </select>
                     </div> */}
-                    
 
+              <SelectInputComponent
+                label="Region"
+                control={control}
+                name="region_nombre"
+                onChange={handleRegionChange}
+                options={regions}
+                data={formData?.region_nombre || ""}
+              />
 
-                    <SelectInputComponent
-                       label="Region"
-                       control={control}
-                       name="region_nombre"
-                       onChange={handleRegionChange}
-                       options={regions}
-                       data={formData?.region_nombre || ""}   
-                    />
-
-                      {/* provincia */}
-                    {/* <div className="flex items-center mb-2">
+              {/* provincia */}
+              {/* <div className="flex items-center mb-2">
                       <label htmlFor="provincia" className="text-gray-700 text-sm font-bold w-1/3">
                         Provincia
                       </label>
@@ -275,19 +283,17 @@ const FormularioView: React.FC<FormModalProps> = ({
                       </select>
                     </div> */}
 
+              <SelectInputComponent
+                label="Provincias"
+                control={control}
+                name="provincia_nombre"
+                options={provincias}
+                onChange={handleProvinciaChange}
+                data={formData?.provincia_nombre || ""}
+              />
 
-
-                    <SelectInputComponent 
-                      label="Provincias"
-                      control={control}
-                      name="provincia_nombre"
-                      options={provincias}
-                      onChange={handleProvinciaChange}
-                      data={formData?.provincia_nombre || ""} 
-                    />
-
-                      {/* Comuna */}
-                    {/* <div className="flex items-center mb-2">
+              {/* Comuna */}
+              {/* <div className="flex items-center mb-2">
                       <label htmlFor="comuna" className="text-gray-700 text-sm font-bold w-1/3">
                         Comuna
                       </label>
@@ -305,22 +311,17 @@ const FormularioView: React.FC<FormModalProps> = ({
                       </select>
                     </div> */}
 
-                      <SelectInputComponent 
-                        label="Comunas"
-                        control={control}
-                        name="comuna_id"
-                        options={comunas} 
-                        onChange={handleComunaChange}
-                        data={formData?.comuna_nombre || ""} 
-                       />
+              <SelectInputComponent
+                label="Comunas"
+                control={control}
+                name="comuna_id"
+                options={comunas}
+                onChange={handleComunaChange}
+                data={formData?.comuna_nombre || ""}
+              />
 
-
-
-
-
-
-                      {/* Telefono */}
-                    {/* <div className="flex items-center mb-2">
+              {/* Telefono */}
+              {/* <div className="flex items-center mb-2">
                       <label htmlFor="telefono" className="text-gray-700 text-sm font-bold w-1/3">
                         Telefono
                       </label>
@@ -335,22 +336,17 @@ const FormularioView: React.FC<FormModalProps> = ({
                       />
                     </div> */}
 
+              <TextInputComponent
+                label="Telefono"
+                type="number"
+                defaultValue=""
+                control={control}
+                name="telefono"
+                data={formData?.telefono || ""}
+              />
 
-                    <TextInputComponent 
-                      label='Telefono' 
-                      type='number' 
-                      defaultValue='' 
-                      control={control}
-                      name="telefono"
-                      data={formData?.telefono || ""}
-                     />
-
-
-
-
-
-                      {/* Correo*/}
-                    {/* <div className="flex items-center mb-2">
+              {/* Correo*/}
+              {/* <div className="flex items-center mb-2">
                       <label htmlFor="correo" className="text-gray-700 text-sm font-bold w-1/3">
                         Correo
                       </label>
@@ -365,23 +361,17 @@ const FormularioView: React.FC<FormModalProps> = ({
                       />
                     </div> */}
 
-                    <TextInputComponent 
-                      label='Correo' 
-                      type='text' 
-                      defaultValue='' 
-                      control={control}
-                      name="correo"
-                      data={formData?.correo || ''}
-                    />
+              <TextInputComponent
+                label="Correo"
+                type="text"
+                defaultValue=""
+                control={control}
+                name="correo"
+                data={formData?.correo || ""}
+              />
 
-
-
-
-
-
-
-                      {/* Sexo */}
-                    {/* <div className="flex items-center mb-2">
+              {/* Sexo */}
+              {/* <div className="flex items-center mb-2">
                       <label htmlFor="masculino" className="text-gray-700 text-sm font-bold w-1/3">
                         Sexo
                       </label>
@@ -398,7 +388,7 @@ const FormularioView: React.FC<FormModalProps> = ({
                           />
                           <label htmlFor="femenino" className='text-sm'>Masculino</label>
                         </div> */}
-                          {/* <div>
+              {/* <div>
                             <input
                               className={`mr-2 ${errors.correo ? 'border-red-500' : ''}` }
                               id="femenino"
@@ -415,22 +405,16 @@ const FormularioView: React.FC<FormModalProps> = ({
                           </div>
                           */}
 
+              <RadioButtonComponent
+                label="Sexo"
+                control={control}
+                name="sexo"
+                options={["Masculino", "Femenino"]}
+                data={formData?.sexo}
+              />
 
-                        <RadioButtonComponent
-                          label="Sexo"
-                          control={control}
-                          name="sexo"
-                          options={["Masculino", "Femenino"]}
-                          data={formData?.sexo}
-                        />
-
-
-
-
-
-
-                      {/* Fecha de nacimiento */}
-                    {/* <div className="flex items-center mb-2">
+              {/* Fecha de nacimiento */}
+              {/* <div className="flex items-center mb-2">
                       <label htmlFor="telefono" className="text-gray-700 text-sm font-bold w-1/3">
                         Fecha de Nacimiento
                       </label>
@@ -446,16 +430,16 @@ const FormularioView: React.FC<FormModalProps> = ({
                       />
                     </div> */}
 
-                    <DateInputComponent
-                        label="Fecha Nacimiento"
-                        control={control}
-                        name="fecha_nacimiento"
-                        type="date"
-                        data={formData?.fecha_nacimiento}
-                    />
+              <DateInputComponent
+                label="Fecha Nacimiento"
+                control={control}
+                name="fecha_nacimiento"
+                type="date"
+                data={formData?.fecha_nacimiento}
+              />
 
-                      {/* Anteojos */}
-                    {/* <div className="flex items-center mb-2">
+              {/* Anteojos */}
+              {/* <div className="flex items-center mb-2">
                       <label htmlFor="anteojos" className="text-gray-700 text-sm font-bold w-1/3">
                         Anteojos
                       </label>
@@ -490,17 +474,16 @@ const FormularioView: React.FC<FormModalProps> = ({
                       </div>
                     </div> */}
 
-                    <RadioButtonComponent
-                        label="Anteojos"
-                        control={control}
-                        name="anteojos"
-                        options={["Lejos", "Cerca"]}
-                        data={formData?.anteojos}
-                      />
+              <RadioButtonComponent
+                label="Anteojos"
+                control={control}
+                name="anteojos"
+                options={["Lejos", "Cerca"]}
+                data={formData?.anteojos}
+              />
 
-
-                      {/* Estado */}
-                    {/* <div className="flex items-center mb-4">
+              {/* Estado */}
+              {/* <div className="flex items-center mb-4">
                       <label htmlFor="masculino" className="text-gray-700 text-sm font-bold w-1/3">
                         Estado
                       </label>
@@ -514,18 +497,15 @@ const FormularioView: React.FC<FormModalProps> = ({
                       </div>
                     </div> */}
 
+              <CheckInputComponent
+                label="Estado"
+                control={control}
+                name="estado"
+                data={formData?.estado}
+              />
 
-
-                    <CheckInputComponent
-                      label="Estado"
-                      control={control}
-                      name="estado"
-                      data={formData?.estado}
-                      />
-
-
-                      {/* Dominio Ingles */}
-                    {/* <div className="flex items-center mb-4">
+              {/* Dominio Ingles */}
+              {/* <div className="flex items-center mb-4">
                       <label htmlFor="comuna" className="text-gray-700 text-sm font-bold w-1/3">
                         Dominio Ingles
                       </label>
@@ -543,27 +523,29 @@ const FormularioView: React.FC<FormModalProps> = ({
                       </select>
                     </div> */}
 
-                    <SelectInputComponent
-                        label='Dominio Ingles'
-                        control={control}
-                        name="dominio_ingles"
-                        options={dominioIngles}
-                        data={formData?.dominio_ingles || ""} 
-                    />
+              <SelectInputComponent
+                label="Dominio Ingles"
+                control={control}
+                name="dominio_ingles"
+                options={dominioIngles}
+                data={formData?.dominio_ingles || ""}
+              />
 
-                    <div className="flex justify-center mt-4">
-                      {onlyRead ? (<></>) : (
-                        <button
-                          type="submit"
-                          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                        >
-                          Enviar
-                        </button>
-                      )}
-                    </div>
-                  </form>
-                </div>
-          </Draggable>
+              <div className="flex justify-center mt-4">
+                {onlyRead ? (
+                  <></>
+                ) : (
+                  <button
+                    type="submit"
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  >
+                    Enviar
+                  </button>
+                )}
+              </div>
+            </form>
+          </div>
+        </Draggable>
       )}
     </>
   );

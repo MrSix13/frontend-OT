@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import PrimaryKeySearch from "../../components/PrimaryKeySearch";
-import { PrimaryButtonsComponent } from "../../components";
+import {
+  PrimaryButtonsComponent,
+  SelectInputComponent,
+  TextInputComponent,
+} from "../../components";
 import TableComponent from "../../components/TableComponent";
 import { useCrud, useEntityUtils } from "../../hooks";
 import { table_head_usuarios } from "../../utils/table_head_utils";
@@ -10,17 +14,28 @@ import UserForm, {
   transformUpdateQuery,
 } from "../forms/UserForm";
 import { toast } from "react-toastify";
+import { useForm } from "react-hook-form";
+import { useAppDispatch } from "../../../redux/store";
 
 type UserData = [number, number, string, string, number, string, number];
+
+export enum EnumGrid {
+  ID = 1,
+  Nombre = 2,
+  Telefono = 3,
+  Correo = 4,
+  Estado = 5,
+  Cargo_id = 6,
+  Cargo = 7,
+}
 
 interface IUsuariosMantenedorProps {
   userData: UserData;
 }
 
-
 const UsuariosMantenedor: React.FC<IUsuariosMantenedorProps> = () => {
   const { createdEntity, editEntity } = useCrud("/api/usuarios/");
-
+  const { control, handleSubmit } = useForm();
   const {
     //entities state
     entities,
@@ -41,30 +56,66 @@ const UsuariosMantenedor: React.FC<IUsuariosMantenedorProps> = () => {
     //primary buttons methods
     handleDeleteAll,
   } = useEntityUtils("/api/usuarios/", "01");
-
-  const handleSaveChange = async (data: IUserInputData, isEditting: boolean) => {
+  //FACTORIZAR
+  const handleSaveChange = async (
+    data: IUserInputData,
+    isEditting: boolean
+  ) => {
     try {
-      console.log('editting', isEditting)
+      console.log("transform-FORM", data);
       const transformedData = isEditting
         ? transformUpdateQuery(data, selectedIds.toString())
         : transformInsertQuery(data);
 
+      console.log("transform-FORM", transformedData);
       if (isEditting) {
-        await editEntity(transformedData)
+        const response = await editEntity(transformedData);
+        const errorResponse = response?.response?.data.error;
+        console.log("errorResponse", errorResponse);
+        if (errorResponse) {
+          if (errorResponse === "IntegrityError") {
+            toast.error("No se pudo actualizar");
+          } else {
+            toast.error(errorResponse);
+          }
+        } else {
+          toast.success("Actualizado correctamente");
+        }
       } else {
-        await createdEntity(transformedData)
+        const response = await createdEntity(transformedData);
+        const errorResponse = response?.response?.data.error;
+        if (errorResponse) {
+          if (errorResponse === "IntegrityError") {
+            toast.error("No se pudo ingresar");
+          } else {
+            toast.error(errorResponse);
+          }
+        } else {
+          toast.success("Creado correctamente");
+        }
       }
 
-      toast.success(isEditting ? "Usuario editado correctamente" : "Usuario Creado Correctamente")
+      // toast.success(
+      //   isEditting
+      //     ? "Usuario editado correctamente"
+      //     : "Usuario Creado Correctamente"
+      // );
 
       closeModal();
       setEntities([]);
-      setOnDelete((prev) => !prev)
+      setOnDelete((prev) => !prev);
     } catch (error) {
-      toast.error(error)
-      console.log('error:', error)
+      console.log("error toaest test:", error.message);
+
+      toast.error(error);
     }
-  }
+  };
+
+  const handleAdd = () => {
+    console.log("click");
+  };
+
+  console.log("selectedID", selectedIds);
 
   return (
     <div className="w-[95%] h-full">
@@ -76,7 +127,11 @@ const UsuariosMantenedor: React.FC<IUsuariosMantenedorProps> = () => {
         <PrimaryKeySearch
           baseUrl="/api/usuarios"
           selectUrl="/api/cargos/"
-          setState={setEntities as React.Dispatch<React.SetStateAction<IUsuariosMantenedorProps[]>>}
+          setState={
+            setEntities as React.Dispatch<
+              React.SetStateAction<IUsuariosMantenedorProps[]>
+            >
+          }
           primaryKeyInputs={[
             { name: "_p1", label: "Nombre", type: "text" },
             { name: "_p2", label: "Cargos", type: "select" },
@@ -86,11 +141,12 @@ const UsuariosMantenedor: React.FC<IUsuariosMantenedorProps> = () => {
         <PrimaryButtonsComponent
           handleAddPerson={openModal}
           handleDeleteAll={handleDeleteAll}
+          handleAddTipe2={handleAdd}
           showAddButton={true}
           showExportButton={true}
           showDeleteButton={true}
-          showForwardButton={true}
-          showRefreshButton={true}
+          showForwardButton={false}
+          showRefreshButton={false}
         />
       </div>
 
@@ -130,10 +186,9 @@ const UsuariosMantenedor: React.FC<IUsuariosMantenedorProps> = () => {
       {/* {isModalOpen && <PermisosMantenedor closeModal={closeModal} />} */}
     </div>
   );
-}
+};
 
 export default UsuariosMantenedor;
-
 
 // //COMBINAR LOGICA
 // const handleChange = async (data) => {

@@ -1,69 +1,67 @@
-import React,{useState} from 'react'
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import 'react-tabs/style/react-tabs.css';
-import { useAppSelector, useAppDispatch } from '../../redux/sotre';
-import { addRegions } from '../../redux/slices/utilsSlice';
-import { toggleCreateModal, updateDataFormCreate } from '../../redux/slices/personSlice';
-import FormularioView from './forms/FormView_v2';
-import TextInputComponent from '../components/forms/TextInputComponent';
-import { useForm } from 'react-hook-form';
-import SelectInputComponent from '../components/forms/SelectInputComponent';
-import RadioButtonComponent from '../components/forms/RadioButtonComponent';
-import DateInputComponent from '../components/forms/DateInputComponent';
-import CheckInputComponent from '../components/forms/CheckInputComponent';
-import useCrud from '../hooks/useCrud';
-
+import React, { useState } from "react";
+import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+import "react-tabs/style/react-tabs.css";
+import { useAppSelector, useAppDispatch } from "../../redux/store";
+import { addRegions } from "../../redux/slices/utilsSlice";
+import {
+  toggleCreateModal,
+  updateDataFormCreate,
+} from "../../redux/slices/personSlice";
+import FormularioView from "./forms/FormView_v2";
+import TextInputComponent from "../components/forms/TextInputComponent";
+import { useForm } from "react-hook-form";
+import SelectInputComponent from "../components/forms/SelectInputComponent";
+import RadioButtonComponent from "../components/forms/RadioButtonComponent";
+import DateInputComponent from "../components/forms/DateInputComponent";
+import CheckInputComponent from "../components/forms/CheckInputComponent";
+import useCrud from "../hooks/useCrud";
 
 interface IPersonViewProps {
-  title:string
+  title: string;
 }
-interface ITab{
-    id:number,
-    title:string
+interface ITab {
+  id: number;
+  title: string;
 }
 
-const PersonView:React.FC<IPersonViewProps> = ({
-    title
-}) => {
+const PersonView: React.FC<IPersonViewProps> = ({ title }) => {
   const [tabs, setTabs] = useState<ITab[]>([]);
   const [nextTabId, setNextTabId] = useState(0);
 
-  const {control, register, formState, handleSubmit} = useForm()
+  const { control, register, formState, handleSubmit } = useForm();
 
-  
-  const apiBaseURL = '/api/personas';
-  const {listEntity} = useCrud(apiBaseURL)
+  const apiBaseURL = "/api/personas";
+  const { listEntity } = useCrud(apiBaseURL);
 
-  const listado = listEntity(2).then((listado)=>console.log('listado', listado))
+  const listado = listEntity(2).then((listado) =>
+    console.log("listado", listado)
+  );
 
   // console.log('listado',listado)
-  
-  
-  
+
   const handleAddTab = () => {
     const newTab: ITab = {
       id: nextTabId,
       title: `Tab ${nextTabId}`,
     };
-    setTabs((prevTabs)=>[...prevTabs, newTab])
-    setNextTabId((prevId)=>prevId + 1)
+    setTabs((prevTabs) => [...prevTabs, newTab]);
+    setNextTabId((prevId) => prevId + 1);
   };
 
-  const handleCloseTab  = (id:number) => {
-    console.log('id', id)
-    setTabs((prevTabs)=>prevTabs.filter((tab)=> tab.id !== id))
+  const handleCloseTab = (id: number) => {
+    console.log("id", id);
+    setTabs((prevTabs) => prevTabs.filter((tab) => tab.id !== id));
   };
-  
+
   // console.log('formState', formState)
-
 
   // const handleForm = (data) => {
   //   console.log('form', data)
   // }
   const data = {
     rut: "122231",
-    nombre: "Fabian"
-  }
+    nombre: "Fabian",
+  };
   const regionsChile = [
     "Arica y Parinacota",
     "Tarapacá",
@@ -82,33 +80,30 @@ const PersonView:React.FC<IPersonViewProps> = ({
     "Aysén del General Carlos Ibáñez del Campo",
     "Magallanes y de la Antártica Chilena",
   ];
-  
 
   return (
     <div>
-        <h1>
-            {title}
-      <button onClick={handleAddTab}>Añadir pestañas</button>
-        
-        </h1>
-        <Tabs>
-          <TabList>
-            {tabs.map((tab,index)=>(
-              <Tab key={index}>
-                <p>contenido</p> <button onClick={()=>handleCloseTab(tab.id)}>X</button>
-              </Tab>
-            ))}
-          </TabList>
-          {tabs.map((tab,index)=>(
-            <TabPanel key={index}>
-              <p>contenido de la pestaña</p>
-            </TabPanel>
+      <h1>
+        {title}
+        <button onClick={handleAddTab}>Añadir pestañas</button>
+      </h1>
+      <Tabs>
+        <TabList>
+          {tabs.map((tab, index) => (
+            <Tab key={index}>
+              <p>contenido</p>{" "}
+              <button onClick={() => handleCloseTab(tab.id)}>X</button>
+            </Tab>
           ))}
+        </TabList>
+        {tabs.map((tab, index) => (
+          <TabPanel key={index}>
+            <p>contenido de la pestaña</p>
+          </TabPanel>
+        ))}
+      </Tabs>
 
-       </Tabs>
-
-
-       {/* <div className='w-[40%]'>
+      {/* <div className='w-[40%]'>
           <h1>Formulario de Prueba</h1>
           <form onSubmit={handleSubmit(handleForm)} >
             <TextInputComponent 
@@ -209,7 +204,7 @@ const PersonView:React.FC<IPersonViewProps> = ({
           </form>
         </div> */}
     </div>
-  )
-}
+  );
+};
 
-export default PersonView
+export default PersonView;

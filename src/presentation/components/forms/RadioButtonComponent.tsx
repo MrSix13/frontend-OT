@@ -7,6 +7,7 @@ interface IRadioButtonProps {
   name: string;
   options: string[];
   data?: any;
+  error?: any;
 }
 
 const RadioButtonComponent: React.FC<IRadioButtonProps> = ({
@@ -15,9 +16,15 @@ const RadioButtonComponent: React.FC<IRadioButtonProps> = ({
   name,
   options,
   data,
+  error,
 }) => {
+  console.log("error", error);
   return (
-    <div className="px-6 py-2 w-full flex flex-col justify-between">
+    <div
+      className={`px-6 py-2 w-[90%] mx-auto flex flex-col justify-between rounded-lg  ${
+        error && "border border-red-400"
+      } `}
+    >
       <label className=" label-input w-[10%]">{label}</label>
       {options.map((option, index) => (
         <div
@@ -44,6 +51,11 @@ const RadioButtonComponent: React.FC<IRadioButtonProps> = ({
           <label className="text-sm">{option}</label>
         </div>
       ))}
+      {error && (
+        <p className="text-xs text-red-500 absolute right-20">
+          {error.message}
+        </p>
+      )}
     </div>
   );
 };

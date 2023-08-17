@@ -23,6 +23,16 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
   const { escritura } = usePermission();
   const { listEntity, deleteAllEntity } = useCrud(baseUrl);
 
+  const refreshData = useCallback(() => {
+    listEntity(pageSize, query)
+      .then((data) => {
+        data && setEntities([...data]);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, [pageSize, onDelete, query]);
+
   const openModal = useCallback(() => {
     setIsModalOpen(true);
   }, []);
@@ -51,40 +61,41 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
     }
   }, [pageSize]);
 
-  const handleDeleteAll = useCallback(() => {
-    async (id?: number) => {
-      if (!escritura) return;
+  // const handleDeleteAll = useCallback(() => {
+  //   async (id?: number) => {
+  //     console.log('handledelete')
+  //     if (!escritura) return;
 
-      const idsToDelete = id ? [id] : selectedIds;
+  //     const idsToDelete = id ? [id] : selectedIds;
 
-      const result = window.confirm("¿Estás seguro de eliminar?");
-      if (!result) return;
+  //     const result = window.confirm("¿Estás seguro de eliminar?");
+  //     if (!result) return;
 
-      try {
-        const response = await deleteAllEntity(idsToDelete);
-        const errorDelete = response?.response?.data?.error;
+  //     try {
+  //       const response = await deleteAllEntity(idsToDelete);
+  //       const errorDelete = response?.response?.data?.error;
 
-        if (errorDelete) {
-          toast.error(errorDelete);
-        } else {
-          resetEntities();
-          toast.success("Eliminados Correctamente");
-        }
-      } catch (error) {
-        toast.error(error);
-        console.log("handleDeleteAll:", error);
-        return error;
-      }
-    };
-  }, [selectedIds, escritura]);
+  //       if (errorDelete) {
+  //         toast.error(errorDelete);
+  //       } else {
+  //         resetEntities();
+  //         toast.success("Eliminados Correctamente");
+  //       }
+  //     } catch (error) {
+  //       toast.error(error);
+  //       console.log("handleDeleteAll:", error);
+  //       return error;
+  //     }
+  //   };
+  // }, [selectedIds, escritura]);
 
   const handleSelectedAll = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setSelectedIds(
-        event.target.checked ? entities.map((entity) => entity[1]) : [],
+        event.target.checked ? entities.map((entity) => entity[1]) : []
       );
     },
-    [entities],
+    [entities]
   );
 
   const handleEntity = (id: number) => {
@@ -98,7 +109,7 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
     setSelectedIds((prevSelectedIds) =>
       prevSelectedIds.includes(id)
         ? prevSelectedIds.filter((selectedId) => selectedId !== id)
-        : [...prevSelectedIds, id],
+        : [...prevSelectedIds, id]
     );
   }, []);
 
@@ -113,7 +124,6 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
 
       if (id) {
         setSelectedIds([id]);
-        setSelectedIds([id]);
         const selectedEntity = entities.find((entity) => entity[1] === id);
         setEntity(selectedEntity || null);
       } else {
@@ -121,7 +131,7 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
         setEntity(null);
       }
     },
-    [entities, escritura],
+    [entities, escritura]
   );
 
   // const handleDelete = async (id: number) => {
@@ -146,52 +156,54 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
   //   }
   // };
 
-  //FACTORIZAR
-  // const handleDeleteAll = useCallback(
-  //   async (id?: number) => {
-  //     if (escritura) {
-  //       if (selectedIds.length >= 1 || id > 0) {
-  //         const result = window.confirm("¿Estás seguro de eliminar?");
-  //         try {
-  //           if (result) {
-  //             if (id > 0) {
-  //               const response = await deleteAllEntity([id]);
-  //               const errorDelete = response?.response?.data?.error;
-  //               console.log("response", errorDelete);
-  //               if (errorDelete) {
-  //                 toast.error(errorDelete);
-  //               } else {
-  //                 setSelectedIds([]);
-  //                 setEntities([]);
-  //                 setPageSize(1);
-  //                 setOnDelete((prev) => !prev);
-  //                 toast.success("Eliminados Correctamente");
-  //               }
-  //             } else {
-  //               const response = await deleteAllEntity(selectedIds);
-  //               const errorDelete = response?.response?.data?.error;
-  //               console.log("response", errorDelete);
-  //               if (errorDelete) {
-  //                 toast.error(errorDelete);
-  //               } else {
-  //                 setSelectedIds([]);
-  //                 setEntities([]);
-  //                 setPageSize(1);
-  //                 setOnDelete((prev) => !prev);
-  //                 toast.success("Eliminados Correctamente");
-  //               }
-  //             }
-  //           }
-  //         } catch (error) {
-  //           toast.error(error.message);
-  //           console.log(error);
-  //           return error;
-  //         }
-  //       }
-  //     }
-  //   },
-  //   [selectedIds, escritura]
-  // );
+  // FACTORIZAR
+  const handleDeleteAll = useCallback(
+    async (id?: number) => {
+      if (escritura) {
+        if (selectedIds.length >= 1 || id > 0) {
+          const result = window.confirm("¿Estás seguro de eliminar?");
+          try {
+            if (result) {
+              if (id > 0) {
+                const response = await deleteAllEntity([id]);
+                const errorDelete = response?.response?.data?.error;
+                console.log("errorDelete", response);
+                console.log("response", errorDelete);
+                if (errorDelete) {
+                  toast.error(errorDelete);
+                } else {
+                  setSelectedIds([]);
+                  setEntities([]);
+                  setPageSize(1);
+                  setOnDelete((prev) => !prev);
+                  toast.success("Eliminados Correctamente");
+                }
+              } else {
+                const response = await deleteAllEntity(selectedIds);
+                const errorDelete = response?.response?.data?.error;
+                console.log("errorDelete", response);
+                console.log("response", errorDelete);
+                if (errorDelete) {
+                  toast.error(errorDelete);
+                } else {
+                  setSelectedIds([]);
+                  setEntities([]);
+                  setPageSize(1);
+                  setOnDelete((prev) => !prev);
+                  toast.success("Eliminados Correctamente");
+                }
+              }
+            }
+          } catch (error) {
+            toast.error(error.message);
+            console.log(error);
+            return error;
+          }
+        }
+      }
+    },
+    [selectedIds, escritura]
+  );
 
   // const handleSelectedAll = useCallback(
   //   (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -258,7 +270,6 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
   useEffect(() => {
     listEntity(pageSize, query)
       .then((data) => {
-        console.log("useData", data);
         data && setEntities((prev) => (prev ? [...prev, ...data] : [...data]));
       })
       .catch((e) => {
@@ -287,5 +298,6 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
     handleEntity,
     setOnDelete,
     entity,
+    refreshData,
   };
 };

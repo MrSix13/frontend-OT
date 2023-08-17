@@ -44,7 +44,7 @@ const useCrud = (
       const response = await axiosInstance.get(searchUrl);
       return response.data;
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -53,18 +53,16 @@ const useCrud = (
       const response = await axiosInstance.post("/crear/", entityData);
       return response.data;
     } catch (error) {
-      console.log(error);
+      return error;
     }
   };
 
-  const editEntity = async (
-    entityData: any
-  ): Promise<any | undefined> => {
+  const editEntity = async (entityData: any): Promise<any | undefined> => {
     try {
       const response = await axiosInstance.post(`/editar/`, entityData);
       return response.data;
     } catch (error) {
-      console.log(error);
+      return error;
     }
   };
 
@@ -82,10 +80,12 @@ const useCrud = (
   const deleteAllEntity = async (id: number[]): Promise<void> => {
     try {
       const idsDelete = id.join(",");
-      const response = await axiosInstance.delete(`/eliminar/?_p1=${idsDelete}&query=05`);
+      const response = await axiosInstance.delete(
+        `/eliminar/?_p1=${idsDelete}&query=05`
+      );
       return response.data;
     } catch (error) {
-      console.log(error)
+      return error;
     }
   };
 
@@ -100,7 +100,7 @@ const useCrud = (
       const response = await axiosInstance.get(endpoint);
       return response.data;
     } catch (error) {
-      console.log(error);
+      return error;
     }
   };
 

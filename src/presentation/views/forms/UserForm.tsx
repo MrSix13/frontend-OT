@@ -6,6 +6,9 @@ import {
 } from "../../components";
 import { useForm } from "react-hook-form";
 import { useEntityUtils } from "../../hooks";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { validationUserSchema } from "../../utils/validationFormSchemas";
+import { EnumGrid } from "../mantenedores/UsuariosMantenedor";
 
 export interface IUserInputData {
   nombre: string;
@@ -23,13 +26,16 @@ interface OutputData {
   _p3?: string;
 }
 
-export function transformInsertQuery(jsonData: IUserInputData): OutputData | null {
-  if (jsonData.password1 !== jsonData.password2) {
+export function transformInsertQuery(
+  jsonData: IUserInputData
+): OutputData | null {
+  if (jsonData.password !== jsonData.password2) {
     alert("Las contraseñas no coinciden");
   }
 
-  const _p1 = `'${jsonData.nombre}', '', ${jsonData.cargo}, '${jsonData.telefono
-    }', '${jsonData.correo}', ${jsonData.estado === "Activo" ? 1 : 2}`;
+  const _p1 = `'${jsonData.nombre}', '', ${jsonData.cargo}, '${
+    jsonData.telefono
+  }', '${jsonData.correo}', ${jsonData.estado === "Activo" ? 1 : 2}`;
 
   const query: OutputData = {
     query: "03",
@@ -38,7 +44,10 @@ export function transformInsertQuery(jsonData: IUserInputData): OutputData | nul
 
   return query;
 }
-export function transformUpdateQuery(jsonData: IUserInputData, primaryKey: string): OutputData | null {
+export function transformUpdateQuery(
+  jsonData: IUserInputData,
+  primaryKey: string
+): OutputData | null {
   const fields = [
     jsonData.nombre && `nombre='${jsonData.nombre}'`,
     jsonData.telefono && `telefono='${jsonData.telefono}'`,
@@ -48,7 +57,9 @@ export function transformUpdateQuery(jsonData: IUserInputData, primaryKey: strin
     jsonData.password1 && `password='${jsonData.password1}'`,
   ];
 
-  const filteredFields = fields.filter(field => field !== null && field !== "");
+  const filteredFields = fields.filter(
+    (field) => field !== null && field !== ""
+  );
 
   if (filteredFields.length === 0) {
     return null;
@@ -62,7 +73,6 @@ export function transformUpdateQuery(jsonData: IUserInputData, primaryKey: strin
     _p3,
   };
 }
-
 
 // export function transformUpdateQuery(
 //   jsonData: IUserInputData,
@@ -109,13 +119,17 @@ const UserForm: React.FC<IUserFormPrps> = ({
   handleChange,
   label,
   data,
-  isEditting
+  isEditting,
 }) => {
-  const { control, handleSubmit } = useForm();
-  console.log("isEditting:", isEditting);
+  const schema = validationUserSchema(isEditting);
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
-  const { entities } = useEntityUtils("/api/cargos/", "02");
-  console.log("cargos:", entities);
   return (
     <div className="bg-white px-4 w-[90%] max-w-md mx-auto absolute top-[25%] left-[40%] rounded-lg shadow-lg">
       <div className="flex justify-end items-end">
@@ -131,14 +145,25 @@ const UserForm: React.FC<IUserFormPrps> = ({
             type="text"
             label="Nombre"
             name="nombre"
-            data={data && data[2]}
+            data={data && data[EnumGrid.Nombre]}
             control={control}
+            error={!isEditting && errors.nombre}
           />
+
           <SelectInputComponent
             label="Cargos"
             name="cargo"
+            showRefresh={true}
             control={control}
-            options={entities}
+            entidad={["/api/cargos/", "02"]}
+            error={!isEditting && errors.cargo}
+          />
+          <SelectInputComponent
+            label="Usuarios"
+            name="usuarios"
+            showRefresh={true}
+            control={control}
+            entidad={["/api/usuarios/", "02"]}
           />
         </div>
 
@@ -147,14 +172,14 @@ const UserForm: React.FC<IUserFormPrps> = ({
             type="text"
             label="Telefono"
             name="telefono"
-            data={data && data[3]}
+            data={data && data[EnumGrid.Telefono]}
             control={control}
           />
           <TextInputComponent
             type="email"
             label="Correo"
             name="correo"
-            data={data && data[4]}
+            data={data && data[EnumGrid.Correo]}
             control={control}
           />
           <div>
@@ -162,8 +187,9 @@ const UserForm: React.FC<IUserFormPrps> = ({
               control={control}
               label="Estado"
               name="estado"
-              data={data && data[5]}
+              data={data && data[EnumGrid.Estado]}
               options={["Activo", "Suspendido"]}
+              error={!isEditting && errors.estado}
             />
           </div>
         </div>
@@ -172,14 +198,16 @@ const UserForm: React.FC<IUserFormPrps> = ({
           <TextInputComponent
             type="password"
             label="Password"
-            name="password1"
+            name="password"
             control={control}
+            error={!isEditting && errors.password}
           />
           <TextInputComponent
             type="password"
             label="Confirmar Password"
             name="password2"
             control={control}
+            error={!isEditting && errors.password}
           />
         </div>
 

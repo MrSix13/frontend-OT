@@ -1,5 +1,5 @@
 import { Permisos } from "../../interfaces";
-import { AppStore, useAppSelector } from "../../redux/sotre";
+import { AppStore, useAppSelector } from "../../redux/store";
 
 
 interface UserPermissions {

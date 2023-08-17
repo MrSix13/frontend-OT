@@ -39,11 +39,11 @@ const TableComponent: React.FC<ITableComponentProps<any>> = ({
     <Typography
       variant="small"
       color="blue-gray"
-      className="font-bold text-lg leading-none opacity-70"
+      className="text-sm leading-none opacity-70"
     >
       {text || ""}
     </Typography>
-  )
+  );
 
   const renderCheckboxCell = (id: number) => (
     <input
@@ -52,7 +52,6 @@ const TableComponent: React.FC<ITableComponentProps<any>> = ({
       type="checkbox"
     />
   );
-
   return (
     <table className="border border-l-2 border-r-2 mx-10 mt-10 w-full min-w-max table-fixed px-2 text-center">
       <thead>
@@ -91,13 +90,14 @@ const TableComponent: React.FC<ITableComponentProps<any>> = ({
                   return (
                     visible && (
                       <td className="border-b-4 px-4 py-2" key={index}>
-                        {index === 0 ? renderCheckboxCell(id) : renderCheckboxCell(row)}
+                        {index === 0
+                          ? renderCheckboxCell(id)
+                          : renderTextCell(row)}
                       </td>
                     )
                   );
                 })}
                 <td>
-
                   {/* ===========BOTONES DE TABLA============ */}
                   {escritura && (
                     <Tooltip content={`Editar ${entidad}`}>
@@ -116,24 +116,24 @@ const TableComponent: React.FC<ITableComponentProps<any>> = ({
                       <IconButton
                         variant="text"
                         color="blue-gray"
-                      // onClick={() => handleEntity(id)}
+                        // onClick={() => handleEntity(id)}
                       >
                         <HiEye className="h-4 w-4" />
                       </IconButton>
                     </Tooltip>
                   )}
 
-                  {escritura && (
+                  {/* {escritura && (
                     <Tooltip content="Permisos de Sistema">
                       <IconButton
                         variant="text"
                         color="blue-gray"
-                      // onClick={() => handleEntity(id)}
+                        // onClick={() => handleEntity(id)}
                       >
                         <RiSettings3Fill className="h-4 w-4" />
                       </IconButton>
                     </Tooltip>
-                  )}
+                  )} */}
 
                   {escritura ? (
                     <Tooltip content={`Eliminar ${entidad}`}>

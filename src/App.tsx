@@ -9,7 +9,7 @@ import PersonView from "./presentation/views/PersonView";
 
 import { Provider } from "react-redux";
 import { ThemeProvider } from "@material-tailwind/react";
-import { store } from "./redux/sotre";
+import { store } from "./redux/store";
 import { BrowserRouter } from "react-router-dom";
 import { RoutesWithNotFound } from "./presentation/utils";
 import { PrivateRoutes, PublicRoutes } from "./interfaces";
@@ -30,7 +30,7 @@ const UsuariosMantenedor = lazy(
 function App() {
   return (
     <div className="App">
-      <Suspense fallback={<>Cargando.....</>}>
+      <Suspense fallback={<>Cargandos.....</>}>
         <Provider store={store}>
           <ThemeProvider>
             <BrowserRouter>

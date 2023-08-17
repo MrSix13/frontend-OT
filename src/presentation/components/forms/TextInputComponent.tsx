@@ -1,7 +1,6 @@
-import { Input } from '@material-tailwind/react';
-import React from 'react'
-import { Controller } from 'react-hook-form';
-
+import { Input } from "@material-tailwind/react";
+import React from "react";
+import { Controller } from "react-hook-form";
 
 interface ITextInputProps {
   label: string;
@@ -11,6 +10,7 @@ interface ITextInputProps {
   type: string;
   control: any;
   data?: any;
+  error?: any;
 }
 
 const TextInputComponent: React.FC<ITextInputProps> = ({
@@ -20,14 +20,17 @@ const TextInputComponent: React.FC<ITextInputProps> = ({
   name,
   defaultValue = "",
   onlyRead,
-  data
+  data,
+  error,
 }) => {
   return (
-    <div className="flex items-center mb-2 mx-4">
-      {/* <label className="label-input w-1/3">{label}</label> */}
+    <div
+      className={`flex items-center mb-2 mx-4 border rounded-xl ${
+        error && "border-red-400"
+      }`}
+    >
       <Controller
         name={name}
-
         control={control}
         defaultValue={data ? data : ""}
         render={({ field }) => (
@@ -38,13 +41,17 @@ const TextInputComponent: React.FC<ITextInputProps> = ({
             //  required={true}
             type={type}
             readOnly={onlyRead}
-            className='custom-input py-2 px-3 w-2/3'
+            className="border-none custom-input py-2 px-3 w-2/3"
           />
         )}
       />
-
+      {error && (
+        <p className="text-xs text-red-500 absolute right-">
+          {error.message}
+        </p>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default TextInputComponent
+export default TextInputComponent;
