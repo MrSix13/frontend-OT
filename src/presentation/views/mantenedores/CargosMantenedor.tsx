@@ -10,8 +10,13 @@ import {
 } from "../../utils/table_head_utils";
 
 const CargosMantenedor = () => {
-  const { handlePageSize, handleDeleteAll, handleRefresh, entity, entities } =
-    useEntityUtils("/api/usuarios/");
+  const {
+    handlePageSize,
+    handleDeleteSelected,
+    handleRefresh,
+    entity,
+    entities,
+  } = useEntityUtils("/api/usuarios/");
 
   // util.js (o cualquier otro nombre que desees)
   // const transformDataForTable = (entities) => {
@@ -48,7 +53,7 @@ const CargosMantenedor = () => {
           <input type="text" className="ml-2" placeholder="" />
         </div>
         <PrimaryButtonsComponent
-          handleDeleteAll={handleDeleteAll}
+          handleDeleteSelected={handleDeleteSelected}
           showAddButton={true}
           showExportButton={true}
           showDeleteButton={true}

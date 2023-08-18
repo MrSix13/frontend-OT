@@ -15,10 +15,10 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
   const [entities, setEntities] = useState([]);
   const [pageSize, setPageSize] = useState(1);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isModalInsert, setisModalInsert] = useState<boolean>(false);
   const [isModalEdit, setIsModalEdit] = useState<boolean>(false);
   const [isEntityProfile, setIsEntityProfile] = useState<boolean>(false);
-  const [onDelete, setOnDelete] = useState<boolean>(false);
+  const [onDelete, setDataGrid] = useState<boolean>(false);
 
   const { escritura } = usePermission();
   const { listEntity, deleteAllEntity } = useCrud(baseUrl);
@@ -34,11 +34,17 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
   }, [pageSize, onDelete, query]);
 
   const openModal = useCallback(() => {
-    setIsModalOpen(true);
+    setisModalInsert(true);
   }, []);
 
   const closeModal = useCallback(() => {
-    setIsModalOpen(false);
+    // const result = window.confirm("¿Estás seguro de volver?");
+    // //result false
+    // //quedarse en el formulario
+    // //limpiar formulario
+    // console.log('result', result)
+
+    setisModalInsert(false);
     setIsModalEdit(false);
     setIsEntityProfile(false);
   }, []);
@@ -51,7 +57,7 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
     setEntities([]);
     setSelectedIds([]);
     setPageSize(1);
-    setOnDelete((prev) => !prev);
+    setDataGrid((prev) => !prev);
   };
 
   const handleRefresh = useCallback(() => {
@@ -61,9 +67,9 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
     }
   }, [pageSize]);
 
-  // const handleDeleteAll = useCallback(() => {
+  // const handleDeleteSelected = useCallback(() => {
   //   async (id?: number) => {
-  //     console.log('handledelete')
+  //     console.log("handledelete");
   //     if (!escritura) return;
 
   //     const idsToDelete = id ? [id] : selectedIds;
@@ -83,7 +89,7 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
   //       }
   //     } catch (error) {
   //       toast.error(error);
-  //       console.log("handleDeleteAll:", error);
+  //       console.log("handleDeleteSelected:", error);
   //       return error;
   //     }
   //   };
@@ -145,7 +151,7 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
   //           toast.error(errorDelete);
   //         } else {
   //           setEntities([]);
-  //           setOnDelete((value) => !value);
+  //           setDataGrid((value) => !value);
   //           toast.success("Eliminado Correctamente");
   //         }
   //       } catch (error) {
@@ -157,7 +163,7 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
   // };
 
   // FACTORIZAR
-  const handleDeleteAll = useCallback(
+  const handleDeleteSelected = useCallback(
     async (id?: number) => {
       if (escritura) {
         if (selectedIds.length >= 1 || id > 0) {
@@ -175,7 +181,7 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
                   setSelectedIds([]);
                   setEntities([]);
                   setPageSize(1);
-                  setOnDelete((prev) => !prev);
+                  setDataGrid((prev) => !prev);
                   toast.success("Eliminados Correctamente");
                 }
               } else {
@@ -189,7 +195,7 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
                   setSelectedIds([]);
                   setEntities([]);
                   setPageSize(1);
-                  setOnDelete((prev) => !prev);
+                  setDataGrid((prev) => !prev);
                   toast.success("Eliminados Correctamente");
                 }
               }
@@ -254,7 +260,7 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
   //         editEntity(entity.id, cleanedData)
   //           .then(()=>{
   //             setEntities([])
-  //             setOnDelete((prev)=>!prev)
+  //             setDataGrid((prev)=>!prev)
   //             toast.success('Editado correctamente')
   //             closeModal()
   //           })
@@ -283,7 +289,7 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
     handlePageSize,
     pageSize,
     setPageSize,
-    isModalOpen,
+    isModalInsert,
     entities,
     setEntities,
     handleRefresh,
@@ -293,10 +299,10 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
     setSelectedIds,
     handleSelectedAll,
     handleSelect,
-    handleDeleteAll,
+    handleDeleteSelected,
     isEntityProfile,
     handleEntity,
-    setOnDelete,
+    setDataGrid,
     entity,
     refreshData,
   };

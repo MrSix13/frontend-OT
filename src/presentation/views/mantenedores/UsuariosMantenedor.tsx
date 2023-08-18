@@ -1,21 +1,22 @@
-import React, { useState } from "react";
-import PrimaryKeySearch from "../../components/PrimaryKeySearch";
+import React from "react";
+import { toast } from "react-toastify";
+
 import {
   PrimaryButtonsComponent,
-  SelectInputComponent,
-  TextInputComponent,
+  PrimaryKeySearch,
+  TableComponent,
 } from "../../components";
-import TableComponent from "../../components/TableComponent";
 import { useCrud, useEntityUtils } from "../../hooks";
-import { table_head_usuarios } from "../../utils/table_head_utils";
 import UserForm, {
   IUserInputData,
   transformInsertQuery,
   transformUpdateQuery,
 } from "../forms/UserForm";
-import { toast } from "react-toastify";
-import { useForm } from "react-hook-form";
-import { useAppDispatch } from "../../../redux/store";
+import {
+  ERROR_MESSAGES,
+  SUCCESS_MESSAGES,
+  table_head_usuarios,
+} from "../../utils";
 
 type UserData = [number, number, string, string, number, string, number];
 
@@ -28,105 +29,148 @@ export enum EnumGrid {
   Cargo_id = 6,
   Cargo = 7,
 }
+const strEntidad = "Usuario ";
+const strBaseUrl = "/api/usuarios/";
+const strListUrl = "/api/cargos/";
+const strQuery = "01";
 
 interface IUsuariosMantenedorProps {
   userData: UserData;
 }
 
 const UsuariosMantenedor: React.FC<IUsuariosMantenedorProps> = () => {
-  const { createdEntity, editEntity } = useCrud("/api/usuarios/");
-  const { control, handleSubmit } = useForm();
+  const { createdEntity, editEntity } = useCrud(strBaseUrl);
+
   const {
     //entities state
     entities,
     setEntities,
     entity,
     //modal methods
-    isModalOpen,
+    isModalInsert,
     isModalEdit,
     toggleEditModal,
     openModal,
     closeModal,
-    setOnDelete,
+    setDataGrid,
     //Check methods
     handleSelect,
     selectedIds,
     setSelectedIds,
     handleSelectedAll,
     //primary buttons methods
-    handleDeleteAll,
-  } = useEntityUtils("/api/usuarios/", "01");
+    handleDeleteSelected,
+  } = useEntityUtils(strBaseUrl, strQuery);
+
   //FACTORIZAR
-  const handleSaveChange = async (
-    data: IUserInputData,
-    isEditting: boolean
-  ) => {
-    try {
-      console.log("transform-FORM", data);
-      const transformedData = isEditting
-        ? transformUpdateQuery(data, selectedIds.toString())
-        : transformInsertQuery(data);
+  // const handleSaveChange = async (
+  //   data: IUserInputData,
+  //   isEditting: boolean
+  // ) => {
+  //   try {
+  //     console.log("transform-FORM", data);
+  //     const transformedData = isEditting
+  //       ? transformUpdateQuery(data, selectedIds.toString())
+  //       : transformInsertQuery(data);
 
-      console.log("transform-FORM", transformedData);
-      if (isEditting) {
-        const response = await editEntity(transformedData);
-        const errorResponse = response?.response?.data.error;
-        console.log("errorResponse", errorResponse);
-        if (errorResponse) {
-          if (errorResponse === "IntegrityError") {
-            toast.error("No se pudo actualizar");
-          } else {
-            toast.error(errorResponse);
-          }
-        } else {
-          toast.success("Actualizado correctamente");
-        }
-      } else {
-        const response = await createdEntity(transformedData);
-        const errorResponse = response?.response?.data.error;
-        if (errorResponse) {
-          if (errorResponse === "IntegrityError") {
-            toast.error("No se pudo ingresar");
-          } else {
-            toast.error(errorResponse);
-          }
-        } else {
-          toast.success("Creado correctamente");
-        }
+  //     console.log("transform-FORM", transformedData);
+  //     if (isEditting) {
+  //       const response = await editEntity(transformedData);
+  //       const errorResponse = response?.response?.data.error;
+  //       console.log("errorResponse", errorResponse);
+  //       if (errorResponse) {
+  //         if (errorResponse === "IntegrityError") {
+  //           toast.error("No se pudo actualizar");
+  //         } else {
+  //           toast.error(errorResponse);
+  //         }
+  //       } else {
+  //         toast.success("Actualizado correctamente");
+  //       }
+  //     } else {
+  //       const response = await createdEntity(transformedData);
+  //       const errorResponse = response?.response?.data.error;
+  //       if (errorResponse) {
+  //         if (errorResponse === "IntegrityError") {
+  //           toast.error("No se pudo ingresar");
+  //         } else {
+  //           toast.error(errorResponse);
+  //         }
+  //       } else {
+  //         toast.success("Creado correctamente");
+  //       }
+  //     }
+
+  //     // toast.success(
+  //     //   isEditting
+  //     //     ? "Usuario editado correctamente"
+  //     //     : "Usuario Creado Correctamente"
+  //     // );
+
+  //     closeModal();
+  //     setEntities([]);
+  //     setDataGrid((prev) => !prev);
+  //   } catch (error) {
+  //     console.log("error toaest test:", error.message);
+
+  //     toast.error(error);
+  //   }
+  // };
+
+  const handleSaveChange = React.useCallback(
+    async (data: IUserInputData, isEditting: boolean) => {
+      try {
+        const transformedData = isEditting
+          ? transformUpdateQuery(data, selectedIds.toString())
+          : transformInsertQuery(data);
+
+        const response = isEditting
+          ? await editEntity(transformedData)
+          : await createdEntity(transformedData);
+
+        handleApiResponse(response, isEditting);
+      } catch (error) {
+        console.log(error);
+        toast.error(error);
       }
+    },
+    [selectedIds, editEntity, createdEntity]
+  );
 
-      // toast.success(
-      //   isEditting
-      //     ? "Usuario editado correctamente"
-      //     : "Usuario Creado Correctamente"
-      // );
+  const handleApiResponse = React.useCallback(
+    (response: any, isEditting: boolean) => {
+      const errorResponse = response?.response?.data.error;
+      if (errorResponse) {
+        const errorMessage =
+          errorResponse === "IntegrityError"
+            ? isEditting
+              ? strEntidad.concat(ERROR_MESSAGES.delete)
+              : strEntidad.concat(ERROR_MESSAGES.create)
+            : errorResponse;
+        toast.error(errorMessage);
+      } else {
+        toast.success(
+          isEditting
+            ? strEntidad.concat(SUCCESS_MESSAGES.edit)
+            : strEntidad.concat(SUCCESS_MESSAGES.create)
+        );
+      }
 
       closeModal();
       setEntities([]);
-      setOnDelete((prev) => !prev);
-    } catch (error) {
-      console.log("error toaest test:", error.message);
-
-      toast.error(error);
-    }
-  };
-
-  const handleAdd = () => {
-    console.log("click");
-  };
-
-  console.log("selectedID", selectedIds);
+      setDataGrid((prev) => !prev);
+    },
+    [setEntities, setDataGrid]
+  );
 
   return (
-    <div className="w-[95%] h-full">
-      <h1 className="text-center mt-5 font-bold text-2xl">
-        Mantenedor de Usuarios
-      </h1>
+    <div className="mantenedorContainer">
+      <h1 className="mantenedorH1">Mantenedor de Usuarios</h1>
 
-      <div className="flex mt-5">
+      <div className="mantenedorHead">
         <PrimaryKeySearch
-          baseUrl="/api/usuarios"
-          selectUrl="/api/cargos/"
+          baseUrl={strBaseUrl}
+          selectUrl={strListUrl}
           setState={
             setEntities as React.Dispatch<
               React.SetStateAction<IUsuariosMantenedorProps[]>
@@ -140,8 +184,7 @@ const UsuariosMantenedor: React.FC<IUsuariosMantenedorProps> = () => {
 
         <PrimaryButtonsComponent
           handleAddPerson={openModal}
-          handleDeleteAll={handleDeleteAll}
-          handleAddTipe2={handleAdd}
+          handleDeleteSelected={handleDeleteSelected}
           showAddButton={true}
           showExportButton={true}
           showDeleteButton={true}
@@ -150,23 +193,25 @@ const UsuariosMantenedor: React.FC<IUsuariosMantenedorProps> = () => {
         />
       </div>
 
-      <div>
+      <>
         <TableComponent
           handleSelectChecked={handleSelect}
           handleSelectedCheckedAll={handleSelectedAll}
           toggleEditModal={toggleEditModal}
-          handleDeleteAll={handleDeleteAll}
+          handleDeleteSelected={handleDeleteSelected}
           selectedIds={selectedIds}
           setSelectedIds={setSelectedIds}
-          entidad="Usuario"
+          entidad={strEntidad}
           data={entities}
           tableHead={table_head_usuarios}
+          showEditButton={true}
+          showDeleteButton={true}
         />
-      </div>
+      </>
 
-      {isModalOpen && (
+      {isModalInsert && (
         <UserForm
-          label="Crear Usuario"
+          label={`Crear ${strEntidad}`}
           handleChange={(data) => handleSaveChange(data, false)}
           closeModal={closeModal}
           isEditting={false}
@@ -175,46 +220,15 @@ const UsuariosMantenedor: React.FC<IUsuariosMantenedorProps> = () => {
 
       {isModalEdit && (
         <UserForm
-          label="Editar Usuario"
+          label={`Editar ${strEntidad}`}
           handleChange={(data) => handleSaveChange(data, true)}
           data={entity}
           closeModal={closeModal}
           isEditting={true}
         />
       )}
-
-      {/* {isModalOpen && <PermisosMantenedor closeModal={closeModal} />} */}
     </div>
   );
 };
 
 export default UsuariosMantenedor;
-
-// //COMBINAR LOGICA
-// const handleChange = async (data) => {
-//   try {
-//     const createData = transformInsertQuery(data);
-//     await createdEntity(createData);
-//     closeModal();
-//     setEntities([]);
-//     setOnDelete((prev) => !prev);
-//     toast.success("Usuario creado correctamente");
-//   } catch (error) {
-//     toast.error(error);
-//     console.log("errorCrear", error);
-//   }
-// };
-
-// const handleEditChange = async (data) => {
-//   try {
-//     const editData = transformUpdateQuery(data, entityID.toString());
-//     console.log("editData", editData);
-//     await editEntity(editData);
-//     closeModal();
-//     setEntities([]);
-//     setOnDelete((prev) => !prev);
-//     toast.success("Usuario editado correctamente");
-//   } catch (error) {
-//     console.log("error editar:", error);
-//   }
-// };

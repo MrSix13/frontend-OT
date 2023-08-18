@@ -38,7 +38,7 @@ const useCrud = (
     primaryKeys: PrimaryKeys,
     query: string
   ): Promise<any | undefined> => {
-    const searchUrl = `${baseUrl}/listado/?query=${query}&${primaryKeys}`;
+    const searchUrl = `${baseUrl}listado/?query=${query}&${primaryKeys}`;
     try {
       console.log("searchUrl", searchUrl);
       const response = await axiosInstance.get(searchUrl);

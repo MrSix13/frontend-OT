@@ -46,7 +46,7 @@ const TextInputComponent: React.FC<ITextInputProps> = ({
         )}
       />
       {error && (
-        <p className="text-xs text-red-500 absolute right-">
+        <p className="text-xs text-red-500 absolute right-20">
           {error.message}
         </p>
       )}
