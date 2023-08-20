@@ -1,5 +1,4 @@
 export { default as FormProvider } from "./FormProvider";
-export * from "./Personas_utils";
 export { default as RoutesWithNotFound } from "./RoutesWithNotFound_utils";
 export * from "./index";
 export * from "./localStorage_utils";

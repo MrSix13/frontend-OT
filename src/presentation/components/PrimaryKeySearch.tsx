@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
@@ -27,6 +29,11 @@ interface PrimaryKeySearchProps<T> {
   baseUrl: string;
   selectUrl: string;
 }
+
+const MemoizedMagnifyingGlassIcon = React.memo(() => (
+  <MagnifyingGlassIcon className="primaryKeyIcon" />
+));
+
 
 const PrimaryKeySearch: React.FC<PrimaryKeySearchProps<any>> = React.memo(
   ({ setState, primaryKeyInputs, baseUrl, selectUrl }) => {
@@ -89,7 +96,7 @@ const PrimaryKeySearch: React.FC<PrimaryKeySearchProps<any>> = React.memo(
                 <Select
                   {...field}
                   value={field.value.toString()}
-                  onChange={(e) => {
+                  onChange={(e: any) => {
                     field.onChange(e);
                     const selectedValue = e.toString();
                     if (selectedValue !== "") {
@@ -101,7 +108,8 @@ const PrimaryKeySearch: React.FC<PrimaryKeySearchProps<any>> = React.memo(
                   <Option value={"0"}>{input.label}</Option>{" "}
                   {/* Opción vacía */}
                   {entities.map((entity, index) => (
-                    <Option key={index} value={entity[0].toString()}>
+                    <Option key={index} value={entity[0] !== undefined ? entity[0].toString() : ''}>
+
                       {entity[1]}
                     </Option>
                   ))}
@@ -157,6 +165,9 @@ const PrimaryKeySearch: React.FC<PrimaryKeySearchProps<any>> = React.memo(
         />
       ));
     };
+
+
+
     return (
       <form className="primaryKeyContainer">
         {renderInputs()}
@@ -167,7 +178,7 @@ const PrimaryKeySearch: React.FC<PrimaryKeySearchProps<any>> = React.memo(
             type="submit"
             onClick={handleSubmit(handleSearch)}
           >
-            <MagnifyingGlassIcon className="primaryKeyIcon" />
+            <MemoizedMagnifyingGlassIcon />
           </IconButton>
         </Tooltip>
       </form>

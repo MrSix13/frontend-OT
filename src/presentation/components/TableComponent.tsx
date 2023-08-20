@@ -40,7 +40,7 @@ const TableComponent: React.FC<ITableComponentProps<any>> = React.memo(
     showEditButton,
     showDeleteButton,
   }) => {
-    const { escritura, lectura } = usePermission();
+    const { escritura } = usePermission();
     const renderTextCell = (text: string) => (
       <Typography variant="small" color="blue-gray" className="gridText">
         {text || ""}

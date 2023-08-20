@@ -1,3 +1,6 @@
+/* eslint-disable react-refresh/only-export-components */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
 import { toast } from "react-toastify";
 
@@ -18,7 +21,7 @@ import {
   table_head_usuarios,
 } from "../../utils";
 
-type UserData = [number, number, string, string, number, string, number];
+
 
 export enum EnumGrid {
   ID = 1,
@@ -34,11 +37,9 @@ const strBaseUrl = "/api/usuarios/";
 const strListUrl = "/api/cargos/";
 const strQuery = "01";
 
-interface IUsuariosMantenedorProps {
-  userData: UserData;
-}
 
-const UsuariosMantenedor: React.FC<IUsuariosMantenedorProps> = () => {
+
+const UsuariosMantenedor: React.FC = () => {
   const { createdEntity, editEntity } = useCrud(strBaseUrl);
 
   const {
@@ -61,61 +62,9 @@ const UsuariosMantenedor: React.FC<IUsuariosMantenedorProps> = () => {
     //primary buttons methods
     handleDeleteSelected,
   } = useEntityUtils(strBaseUrl, strQuery);
+  console.log('entity', entity)
 
-  //FACTORIZAR
-  // const handleSaveChange = async (
-  //   data: IUserInputData,
-  //   isEditting: boolean
-  // ) => {
-  //   try {
-  //     console.log("transform-FORM", data);
-  //     const transformedData = isEditting
-  //       ? transformUpdateQuery(data, selectedIds.toString())
-  //       : transformInsertQuery(data);
 
-  //     console.log("transform-FORM", transformedData);
-  //     if (isEditting) {
-  //       const response = await editEntity(transformedData);
-  //       const errorResponse = response?.response?.data.error;
-  //       console.log("errorResponse", errorResponse);
-  //       if (errorResponse) {
-  //         if (errorResponse === "IntegrityError") {
-  //           toast.error("No se pudo actualizar");
-  //         } else {
-  //           toast.error(errorResponse);
-  //         }
-  //       } else {
-  //         toast.success("Actualizado correctamente");
-  //       }
-  //     } else {
-  //       const response = await createdEntity(transformedData);
-  //       const errorResponse = response?.response?.data.error;
-  //       if (errorResponse) {
-  //         if (errorResponse === "IntegrityError") {
-  //           toast.error("No se pudo ingresar");
-  //         } else {
-  //           toast.error(errorResponse);
-  //         }
-  //       } else {
-  //         toast.success("Creado correctamente");
-  //       }
-  //     }
-
-  //     // toast.success(
-  //     //   isEditting
-  //     //     ? "Usuario editado correctamente"
-  //     //     : "Usuario Creado Correctamente"
-  //     // );
-
-  //     closeModal();
-  //     setEntities([]);
-  //     setDataGrid((prev) => !prev);
-  //   } catch (error) {
-  //     console.log("error toaest test:", error.message);
-
-  //     toast.error(error);
-  //   }
-  // };
 
   const handleSaveChange = React.useCallback(
     async (data: IUserInputData, isEditting: boolean) => {
@@ -129,7 +78,7 @@ const UsuariosMantenedor: React.FC<IUsuariosMantenedorProps> = () => {
           : await createdEntity(transformedData);
 
         handleApiResponse(response, isEditting);
-      } catch (error) {
+      } catch (error: any) {
         console.log(error);
         toast.error(error);
       }
@@ -173,7 +122,7 @@ const UsuariosMantenedor: React.FC<IUsuariosMantenedorProps> = () => {
           selectUrl={strListUrl}
           setState={
             setEntities as React.Dispatch<
-              React.SetStateAction<IUsuariosMantenedorProps[]>
+              React.SetStateAction<any[]>
             >
           }
           primaryKeyInputs={[

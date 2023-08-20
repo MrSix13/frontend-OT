@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { IconButton, Option, Select, Tooltip } from "@material-tailwind/react";
@@ -14,24 +16,24 @@ interface ISelectInputProps {
   data?: any;
   onChange?: (value: string) => void;
   error?: any;
-  entidad?: string[];
+  entidad: string[];
 }
 
 const SelectInputComponent: React.FC<ISelectInputProps> = React.memo(
-  ({ label, control, name, showRefresh, data, onChange, error, entidad }) => {
+  ({ label, control, name, showRefresh, data, error, entidad }) => {
     const [toggle, setToggle] = useState(false);
+    const strUrl = entidad && entidad[0]
+    const { entities, refreshData } = useEntityUtils(strUrl, entidad[1]);
 
-    const { entities, refreshData } = useEntityUtils(entidad[0], entidad[1]);
-    console.log("showrefresh", showRefresh);
     useEffect(() => {
       refreshData();
     }, [toggle, refreshData]);
 
+
     return (
       <div
-        className={`flex items-center mb-2 mx-4 mt-select mt-select-dropdown-up ${
-          error & "border border-red-400"
-        }`}
+        className="flex items-center mb-2 mx-4 mt-select mt-select-dropdown-up "
+
       >
         {/* <label className="label-input w-1/3">{label}</label> */}
         <Controller
@@ -41,21 +43,25 @@ const SelectInputComponent: React.FC<ISelectInputProps> = React.memo(
           render={({ field }) => (
             <Select
               {...field}
-              value={field.value}
               defaultValue="hola"
               label={label}
-              onChange={(e) => {
-                field.onChange(e);
-                onChange && onChange(e);
-              }}
+              // onChange={(e) => {
+              //   field.onChange(e);
+              //   onchange && onchange(e);
+              // }}
               className="custom-input py-2 px-3"
             >
               {entities &&
-                entities.map((option, index) => (
-                  <Option value={option[0].toString()} key={index}>
+                entities.map((option: [string | undefined, string], index) => (
+                  <Option
+                    value={option[0] !== undefined ? option[0].toString() : ''}
+                    key={index}
+                  >
                     {option[1]}
                   </Option>
                 ))}
+
+
             </Select>
           )}
         />
@@ -84,3 +90,5 @@ const SelectInputComponent: React.FC<ISelectInputProps> = React.memo(
 );
 
 export default SelectInputComponent;
+
+

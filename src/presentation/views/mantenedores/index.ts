@@ -1,2 +1,4 @@
-export { default as ListPerson } from './ListPerson';
-export { default as FuncionalidadesMantenedor } from './FuncionalidadesMantenedor';
+export { default as CargosMantenedor } from "./CargosMantenedor";
+export { default as PermisosMantenedor } from "./PermisosMantenedor";
+export { default as UsuariosMantenedor } from "./UsuariosMantenedor";
+export * from "./index";

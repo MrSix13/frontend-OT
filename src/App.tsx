@@ -1,11 +1,11 @@
-import { Suspense, useEffect, lazy } from "react";
+import { Suspense, lazy } from "react";
 
 import "./App.css";
 import { ComplexNavbar } from "./presentation/components";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Routes, Route, Navigate } from "react-router-dom";
-import PersonView from "./presentation/views/PersonView";
+import { Route, Navigate } from "react-router-dom";
+
 
 import { Provider } from "react-redux";
 import { ThemeProvider } from "@material-tailwind/react";
@@ -17,15 +17,15 @@ import AuthGuard from "./presentation/guards/auth_guard";
 
 //Lazy components
 const Login = lazy(() => import("./presentation/pages/Login"));
-const ListPerson = lazy(
-  () => import("./presentation/views/mantenedores/ListPerson")
-);
+
 const CargosMantenedor = lazy(
   () => import("./presentation/views/mantenedores/CargosMantenedor")
 );
 const UsuariosMantenedor = lazy(
   () => import("./presentation/views/mantenedores/UsuariosMantenedor")
 );
+
+const Navbar = lazy(() => import('./presentation/components/ComplexNavbar'))
 
 function App() {
   return (
@@ -35,17 +35,17 @@ function App() {
           <ThemeProvider>
             <BrowserRouter>
               <ToastContainer />
-              <ComplexNavbar />
+              <Navbar />
               <RoutesWithNotFound>
                 <Route path={PublicRoutes.LOGIN} element={<Login />} />
                 <Route element={<AuthGuard privateValidation={true} />}>
                   <Route
                     path={PrivateRoutes.PERSONAS}
-                    element={<ListPerson />}
+                    element={<CargosMantenedor />}
                   />
                   <Route
                     path={PrivateRoutes.PRIVATE}
-                    element={<PersonView title="pestaña prueba" />}
+                    element={<CargosMantenedor />}
                   />
                   <Route
                     path={PrivateRoutes.CARGOS}

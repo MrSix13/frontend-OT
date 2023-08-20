@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useSelector } from "react-redux";
 import { TypedUseSelectorHook, useDispatch } from "react-redux";
-import { utilsReducer, userReducer, listBoxSlice } from "./slices";
-import { IPerson, IUser } from "../interfaces";
+import { userReducer } from "./slices";
+import { IUser } from "../interfaces";
 
 export interface AppStore {
   user: IUser;
@@ -12,8 +12,7 @@ export interface AppStore {
 export const store = configureStore<AppStore>({
   reducer: {
     // user: usersReducer
-    utils: utilsReducer,
-    listBox: listBoxSlice,
+    // listBox: listBoxSlice,
     user: userReducer,
   },
 });

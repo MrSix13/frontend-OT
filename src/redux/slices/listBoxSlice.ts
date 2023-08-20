@@ -21,23 +21,23 @@ export const fetchData = createAsyncThunk(
   async (entidad: string) => {
     const response = await axios.get(`${apiURL}/${entidad}/listado/?query=02`);
     return response.data;
-  }
+  },
 );
 
 export const listBoxSlice = createSlice({
   initialState,
   name: "ListBoxSlice",
   reducers: {
-    updateDataInfo: (state, action) => {
-      const { entidad, newDataInfo } = action.payload;
-      const entidadItem = state.find((item) => item.entidad === entidad);
-      entidadItem && (entidadItem.dataInfo = newDataInfo);
-    },
-    clearDataInfo: (state, action) => {
-      const entidad = action.payload;
-      const entidadItem = state.find((item) => item.entidad === entidad);
-      entidad && (entidadItem.dataInfo = []);
-    },
+    //   updateDataInfo: (state, action) => {
+    //     const { entidad, newDataInfo } = action.payload;
+    //     const entidadItem = state.find((item) => item.entidad === entidad);
+    //     entidadItem && (entidadItem.dataInfo = newDataInfo);
+    //   },
+    //   clearDataInfo: (state, action) => {
+    //     const entidad = action.payload;
+    //     const entidadItem = state.find((item) => item.entidad === entidad);
+    //     entidad && (entidadItem.dataInfo = []);
+    //   },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchData.fulfilled, (state, action) => {
@@ -50,8 +50,6 @@ export const listBoxSlice = createSlice({
     });
   },
 });
-
-export const { updateDataInfo, clearDataInfo } = listBoxSlice.actions;
 
 export default listBoxSlice.reducer;
 

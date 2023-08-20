@@ -1,6 +1,5 @@
 import React from "react";
 import { AiOutlineForward, AiFillDelete } from "react-icons/ai";
-import { ExportCSV } from ".";
 import { IconButton, Tooltip } from "@material-tailwind/react";
 import { SiAddthis } from "react-icons/si";
 import { FiRefreshCw } from "react-icons/fi";
@@ -26,14 +25,13 @@ const PrimaryButtonsComponent: React.FC<IPrimaryButtonProps> = React.memo(
   ({
     handleDeleteSelected,
     handlePageSize,
-    personsLength,
     handleAddPerson,
     handleRefresh,
     showForwardButton,
     showAddButton,
     showRefreshButton,
     showDeleteButton,
-    showExportButton,
+    // showExportButton,
   }) => {
     const { escritura } = usePermission();
 
@@ -90,7 +88,7 @@ const PrimaryButtonsComponent: React.FC<IPrimaryButtonProps> = React.memo(
             BUTTON_MESSAGES.refresh
           )}
 
-        {showExportButton && <ExportCSV data={personsLength} />}
+        {/* {showExportButton && <ExportCSV data={personsLength} />} */}
 
         {showDeleteButton &&
           escritura &&

@@ -1,23 +1,27 @@
-import React from "react";
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable react-refresh/only-export-components */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useEffect } from "react";
 import {
   RadioButtonComponent,
   SelectInputComponent,
   TextInputComponent,
 } from "../../components";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { validationUserSchema } from "../../utils/validationFormSchemas";
 import { EnumGrid } from "../mantenedores/UsuariosMantenedor";
 import { ERROR_MESSAGES } from "../../utils";
 
 export interface IUserInputData {
-  nombre: string;
-  password: string;
-  password2: string;
-  cargo: string;
-  telefono: string;
-  correo: string;
-  estado: string;
+  nombre: string | undefined;
+  password: string | undefined;
+  password2?: string | undefined;
+  cargo: string | undefined;
+  telefono: number | undefined;
+  correo: string | undefined;
+  estado: string | undefined;
 }
 
 interface OutputData {
@@ -33,13 +37,12 @@ export function transformInsertQuery(
     alert(ERROR_MESSAGES.passwordNotMatch);
   }
 
-  const _p1 = `'${jsonData.nombre}', '', ${jsonData.cargo}, '${
-    jsonData.telefono
-  }', '${jsonData.correo}', ${jsonData.estado === "Activo" ? 1 : 2}`;
+  const _p1 = `'${jsonData.nombre}', '', ${jsonData.cargo}, '${jsonData.telefono
+    }', '${jsonData.correo}', ${jsonData.estado === "Activo" ? 1 : 2}`;
 
   const query: OutputData = {
     query: "03",
-    _p1: _p1,
+    _p1: _p1
   };
 
   return query;
@@ -70,13 +73,13 @@ export function transformUpdateQuery(
   return {
     query: "04",
     _p1: primaryKey,
-    _p3,
+    _p3
   };
 }
 
 interface IUserFormPrps {
   closeModal: () => void;
-  handleChange?: (data: any, isEditting: boolean) => void;
+  handleChange: SubmitHandler<IUserInputData>
   data?: any[];
   label: string;
   isEditting?: boolean;
@@ -89,10 +92,19 @@ const UserForm: React.FC<IUserFormPrps> = React.memo(
       control,
       handleSubmit,
       formState: { errors },
+      setValue
     } = useForm({
       resolver: yupResolver(schema),
     });
 
+    useEffect(() => {
+      if (data) {
+        setValue("nombre", data[EnumGrid.Nombre]);
+        setValue("password", "");
+        setValue("password2", ""); // Asegúrate de establecer password2 también
+        // ... establecer los valores para los otros campos
+      }
+    }, [data, setValue]);
     return (
       <div className="useFormContainer">
         <div className="userFormBtnCloseContainer">

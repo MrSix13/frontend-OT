@@ -2,27 +2,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import axios, { AxiosInstance } from "axios";
-import { useState } from "react";
 
-type PrimaryKeys = {
-  [key: string]: string | undefined;
-};
+
+
 
 const useCrud = (
   apiBaseUrl: string
 ): {
-  data: any;
   createdEntity: (entityData: any) => Promise<any | undefined>;
   editEntity: (entityData: any) => Promise<any | undefined>;
-  // deleteEntity: (id: number) => Promise<void>;
-  deleteAllEntity: (id: number[]) => Promise<void>;
-  listEntity: (pageSize?: number) => Promise<void>;
+  deleteAllEntity: (id: number[]) => Promise<any | undefined>;
+  listEntity: (pageSize?: number, query?: string) => Promise<any | undefined>;
   searchEntityByPrimaryKeys: (
-    primaryKeys: PrimaryKeys,
+    primaryKeys: string,
     query: string
   ) => Promise<any | undefined>;
 } => {
-  const [data, _setData] = useState([]);
+
 
   const baseUrl = apiBaseUrl.startsWith("http")
     ? apiBaseUrl
@@ -35,7 +31,7 @@ const useCrud = (
   });
 
   const searchEntityByPrimaryKeys = async (
-    primaryKeys: PrimaryKeys,
+    primaryKeys: string,
     query: string
   ): Promise<any | undefined> => {
     const searchUrl = `${baseUrl}listado/?query=${query}&${primaryKeys}`;
@@ -66,18 +62,7 @@ const useCrud = (
     }
   };
 
-  // const deleteEntity = async (id: number): Promise<void> => {
-  //   try {
-  //     const response = await axiosInstance.delete(
-  //       `/eliminar/?_p1=${id}&query=05`
-  //     );
-  //     return response.data;
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  const deleteAllEntity = async (id: number[]): Promise<void> => {
+  const deleteAllEntity = async (id: number[]): Promise<void | unknown> => {
     try {
       const idsDelete = id.join(",");
       const response = await axiosInstance.delete(
@@ -92,7 +77,7 @@ const useCrud = (
   const listEntity = async (
     pageSize?: number,
     query?: string
-  ): Promise<void> => {
+  ): Promise<void | unknown> => {
     try {
       const endpoint = pageSize
         ? `/listado/?query=${query}&page=${pageSize}`
@@ -105,7 +90,6 @@ const useCrud = (
   };
 
   return {
-    data,
     createdEntity,
     editEntity,
     searchEntityByPrimaryKeys,

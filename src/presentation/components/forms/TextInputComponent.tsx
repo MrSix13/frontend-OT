@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Input } from "@material-tailwind/react";
 import React from "react";
 import { Controller } from "react-hook-form";
@@ -18,16 +19,14 @@ const TextInputComponent: React.FC<ITextInputProps> = ({
   type,
   control,
   name,
-  defaultValue = "",
   onlyRead,
   data,
   error,
 }) => {
   return (
     <div
-      className={`flex items-center mb-2 mx-4 border rounded-xl ${
-        error && "border-red-400"
-      }`}
+      className={`flex items-center mb-2 mx-4 border rounded-xl ${error && "border-red-400"
+        }`}
     >
       <Controller
         name={name}

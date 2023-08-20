@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -12,7 +14,7 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
     ? entityApiBaseUrl
     : `http://127.0.0.1:8000${entityApiBaseUrl}`;
   const [entity, setEntity] = useState<any | null>(null);
-  const [entities, setEntities] = useState([]);
+  const [entities, setEntities] = useState<never[]>([]);
   const [pageSize, setPageSize] = useState(1);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [isModalInsert, setisModalInsert] = useState<boolean>(false);
@@ -25,9 +27,7 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
 
   const refreshData = useCallback(() => {
     listEntity(pageSize, query)
-      .then((data) => {
-        data && setEntities([...data]);
-      })
+      .then((data: []) => data && setEntities([...data]))
       .catch((e) => {
         console.log(e);
       });
@@ -38,12 +38,6 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
   }, []);
 
   const closeModal = useCallback(() => {
-    // const result = window.confirm("¿Estás seguro de volver?");
-    // //result false
-    // //quedarse en el formulario
-    // //limpiar formulario
-    // console.log('result', result)
-
     setisModalInsert(false);
     setIsModalEdit(false);
     setIsEntityProfile(false);
@@ -98,15 +92,15 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
   const handleSelectedAll = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setSelectedIds(
-        event.target.checked ? entities.map((entity) => entity[1]) : []
+        event.target.checked ? entities.map((entity) => entity[1]) : [],
       );
     },
-    [entities]
+    [entities],
   );
 
   const handleEntity = (id: number) => {
     setSelectedIds([id]);
-    const selectedEntity = entities.find((entity) => entity.id === id);
+    const selectedEntity = entities.find((entity) => entity[1] === id);
     setEntity(selectedEntity || null);
     setIsEntityProfile((prev) => !prev);
   };
@@ -115,7 +109,7 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
     setSelectedIds((prevSelectedIds) =>
       prevSelectedIds.includes(id)
         ? prevSelectedIds.filter((selectedId) => selectedId !== id)
-        : [...prevSelectedIds, id]
+        : [...prevSelectedIds, id],
     );
   }, []);
 
@@ -137,7 +131,7 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
         setEntity(null);
       }
     },
-    [entities, escritura]
+    [entities, escritura],
   );
 
   // const handleDelete = async (id: number) => {
@@ -166,11 +160,11 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
   const handleDeleteSelected = useCallback(
     async (id?: number) => {
       if (escritura) {
-        if (selectedIds.length >= 1 || id > 0) {
+        if (selectedIds.length >= 1 || (id && id > 0)) {
           const result = window.confirm("¿Estás seguro de eliminar?");
           try {
             if (result) {
-              if (id > 0) {
+              if (id && id > 0) {
                 const response = await deleteAllEntity([id]);
                 const errorDelete = response?.response?.data?.error;
                 console.log("errorDelete", response);
@@ -200,7 +194,7 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
                 }
               }
             }
-          } catch (error) {
+          } catch (error: any) {
             toast.error(error.message);
             console.log(error);
             return error;
@@ -208,7 +202,7 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
         }
       }
     },
-    [selectedIds, escritura]
+    [selectedIds, escritura],
   );
 
   // const handleSelectedAll = useCallback(
@@ -275,11 +269,14 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
 
   useEffect(() => {
     listEntity(pageSize, query)
-      .then((data) => {
-        data && setEntities((prev) => (prev ? [...prev, ...data] : [...data]));
+      .then((data: []) => {
+        data &&
+          setEntities((prev) =>
+            prev ? [...prev, ...data] : data && [...data],
+          );
       })
       .catch((e) => {
-        console.log(e);
+        return e;
       });
   }, [pageSize, onDelete]);
 
@@ -305,5 +302,6 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
     setDataGrid,
     entity,
     refreshData,
+    resetEntities,
   };
 };

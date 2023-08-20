@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
-import { Control, Controller, FieldValues } from "react-hook-form";
+import { Controller } from "react-hook-form";
 
 interface IRadioButtonProps {
   label: string;
-  control: Control<FieldValues>;
+  control: any;
   name: string;
   options: string[];
   data?: any;
@@ -21,9 +22,8 @@ const RadioButtonComponent: React.FC<IRadioButtonProps> = ({
   console.log("error", error);
   return (
     <div
-      className={`px-6 py-2 w-[90%] mx-auto flex flex-col justify-between rounded-lg  ${
-        error && "border border-red-400"
-      } `}
+      className={`px-6 py-2 w-[90%] mx-auto flex flex-col justify-between rounded-lg  ${error && "border border-red-400"
+        } `}
     >
       <label className=" label-input w-[10%]">{label}</label>
       {options.map((option, index) => (
