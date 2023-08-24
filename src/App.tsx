@@ -1,11 +1,9 @@
 import { Suspense, lazy } from "react";
 
 import "./App.css";
-import { ComplexNavbar } from "./presentation/components";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Route, Navigate } from "react-router-dom";
-
 
 import { Provider } from "react-redux";
 import { ThemeProvider } from "@material-tailwind/react";
@@ -24,8 +22,10 @@ const CargosMantenedor = lazy(
 const UsuariosMantenedor = lazy(
   () => import("./presentation/views/mantenedores/UsuariosMantenedor")
 );
-
-const Navbar = lazy(() => import('./presentation/components/ComplexNavbar'))
+const Navbar = lazy(() => import("./presentation/components/ComplexNavbar"));
+const FuncionalidadesMantenedor = lazy(
+  () => import("./presentation/views/mantenedores/FuncionalidadesMantenedor")
+);
 
 function App() {
   return (
@@ -54,6 +54,10 @@ function App() {
                   <Route
                     path={PrivateRoutes.USUARIOS}
                     element={<UsuariosMantenedor />}
+                  />
+                  <Route
+                    path={PrivateRoutes.FUNCIONALIDADES}
+                    element={<FuncionalidadesMantenedor />}
                   />
                 </Route>
                 <Route

@@ -15,6 +15,11 @@ export const table_head_cargos = [
     key: "nombre",
     visible: true,
   },
+  {
+    cell: "Opciones",
+    key: "opciones",
+    visible: true,
+  },
 ];
 
 // Para la tabla Perfiles

@@ -72,8 +72,9 @@ function ProfileMenu() {
           />
           <ChevronDownIcon
             strokeWidth={2.5}
-            className={`h-3 w-3 transition-transform ${isMenuOpen ? "rotate-180" : ""
-              }`}
+            className={`h-3 w-3 transition-transform ${
+              isMenuOpen ? "rotate-180" : ""
+            }`}
           />
         </Button>
       </MenuHandler>
@@ -84,10 +85,11 @@ function ProfileMenu() {
             <MenuItem
               key={label}
               onClick={closeMenu}
-              className={`flex items-center gap-2 rounded ${isLastItem
+              className={`flex items-center gap-2 rounded ${
+                isLastItem
                   ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
                   : ""
-                }`}
+              }`}
             >
               {React.createElement(icon, {
                 className: `h-4 w-4 ${isLastItem ? "text-red-500" : ""}`,
@@ -112,16 +114,16 @@ function ProfileMenu() {
 // nav list menu
 const navListMenuItems = [
   {
-    title: "Mantenedor de Personas",
-    link: "/personas",
+    title: "Mantenedor de Usuarios",
+    link: "/usuarios",
   },
   {
     title: "Mantenedor de Cargos",
     link: "/cargos",
   },
   {
-    title: "Mantenedor de Usuarios",
-    link: "/usuarios",
+    title: "Mantenedor de Funcionalidades",
+    link: "/funcionalidades",
   },
   {
     title: "Login",
@@ -162,8 +164,9 @@ function NavListMenu() {
               <Square3Stack3DIcon className="h-[18px] w-[18px]" /> Pages{" "}
               <ChevronDownIcon
                 strokeWidth={2}
-                className={`h-3 w-3 transition-transform ${isMenuOpen ? "rotate-180" : ""
-                  }`}
+                className={`h-3 w-3 transition-transform ${
+                  isMenuOpen ? "rotate-180" : ""
+                }`}
               />
             </MenuItem>
           </Typography>

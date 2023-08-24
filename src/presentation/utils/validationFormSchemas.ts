@@ -12,3 +12,15 @@ export const validationUserSchema = (isEditting: boolean | undefined) =>
     estado: !isEditting ? yup.string().required(`${msg}`) : yup.string(),
     password2: !isEditting ? yup.string().required(`${msg}`) : yup.string(),
   });
+
+export const validationCargosSchema = (isEditting: boolean | undefined) =>
+  yup.object().shape({
+    nombre: !isEditting ? yup.string().required(`${msg}`) : yup.string(),
+  });
+
+export const validationFuncionalidadSchema = (
+  isEditting: boolean | undefined
+) =>
+  yup.object().shape({
+    funcionalidad: !isEditting ? yup.string().required(`${msg}`) : yup.string(),
+  });

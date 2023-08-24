@@ -7,7 +7,8 @@ export const PrivateRoutes = {
     PRIVATE: 'private',
     PERSONAS: 'personas',
     CARGOS: 'cargos',
-    USUARIOS: 'usuarios'
+    USUARIOS: 'usuarios',
+    FUNCIONALIDADES:'funcionalidades'
 }
 
 

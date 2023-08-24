@@ -21,8 +21,6 @@ import {
   table_head_usuarios,
 } from "../../utils";
 
-
-
 export enum EnumGrid {
   ID = 1,
   Nombre = 2,
@@ -36,8 +34,6 @@ const strEntidad = "Usuario ";
 const strBaseUrl = "/api/usuarios/";
 const strListUrl = "/api/cargos/";
 const strQuery = "01";
-
-
 
 const UsuariosMantenedor: React.FC = () => {
   const { createdEntity, editEntity } = useCrud(strBaseUrl);
@@ -62,9 +58,9 @@ const UsuariosMantenedor: React.FC = () => {
     //primary buttons methods
     handleDeleteSelected,
   } = useEntityUtils(strBaseUrl, strQuery);
-  console.log('entity', entity)
+  // console.log("entity", selectedIds);
 
-
+  console.log("entities:", entities);
 
   const handleSaveChange = React.useCallback(
     async (data: IUserInputData, isEditting: boolean) => {
@@ -120,11 +116,7 @@ const UsuariosMantenedor: React.FC = () => {
         <PrimaryKeySearch
           baseUrl={strBaseUrl}
           selectUrl={strListUrl}
-          setState={
-            setEntities as React.Dispatch<
-              React.SetStateAction<any[]>
-            >
-          }
+          setState={setEntities as React.Dispatch<React.SetStateAction<any[]>>}
           primaryKeyInputs={[
             { name: "_p1", label: "Nombre", type: "text" },
             { name: "_p2", label: "Cargos", type: "select" },

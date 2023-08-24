@@ -48,6 +48,7 @@
 /*========CLASSES PRIMARYKEYSEARCH=======*/
 .primaryKeyContainer{
   display: flex;
+  width: 90%;
   margin-left: 2.5rem;
   margin-right: 2.5rem;
 }

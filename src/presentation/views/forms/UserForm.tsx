@@ -37,12 +37,13 @@ export function transformInsertQuery(
     alert(ERROR_MESSAGES.passwordNotMatch);
   }
 
-  const _p1 = `'${jsonData.nombre}', '', ${jsonData.cargo}, '${jsonData.telefono
-    }', '${jsonData.correo}', ${jsonData.estado === "Activo" ? 1 : 2}`;
+  const _p1 = `'${jsonData.nombre}', '', ${jsonData.cargo}, '${
+    jsonData.telefono
+  }', '${jsonData.correo}', ${jsonData.estado === "Activo" ? 1 : 2}`;
 
   const query: OutputData = {
     query: "03",
-    _p1: _p1
+    _p1: _p1,
   };
 
   return query;
@@ -73,13 +74,13 @@ export function transformUpdateQuery(
   return {
     query: "04",
     _p1: primaryKey,
-    _p3
+    _p3,
   };
 }
 
 interface IUserFormPrps {
   closeModal: () => void;
-  handleChange: SubmitHandler<IUserInputData>
+  handleChange: SubmitHandler<IUserInputData>;
   data?: any[];
   label: string;
   isEditting?: boolean;
@@ -92,7 +93,7 @@ const UserForm: React.FC<IUserFormPrps> = React.memo(
       control,
       handleSubmit,
       formState: { errors },
-      setValue
+      setValue,
     } = useForm({
       resolver: yupResolver(schema),
     });
@@ -124,15 +125,16 @@ const UserForm: React.FC<IUserFormPrps> = React.memo(
               control={control}
               error={!isEditting && errors.nombre}
             />
-
-            <SelectInputComponent
-              label="Cargo"
-              name="cargo"
-              showRefresh={true}
-              control={control}
-              entidad={["/api/cargos/", "02"]}
-              error={!isEditting && errors.cargo}
-            />
+            <div className="w-full">
+              <SelectInputComponent
+                label="Cargo"
+                name="cargo"
+                showRefresh={true}
+                control={control}
+                entidad={["/api/cargos/", "02"]}
+                error={!isEditting && errors.cargo}
+              />
+            </div>
 
             <TextInputComponent
               type="text"

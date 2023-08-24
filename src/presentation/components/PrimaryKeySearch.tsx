@@ -13,6 +13,7 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 import useCrud from "../hooks/useCrud";
 import { useEntityUtils } from "../hooks";
+import { SelectInputComponent } from ".";
 
 interface IPrimaryKeyState {
   [key: string]: string | number;
@@ -27,22 +28,23 @@ interface PrimaryKeySearchProps<T> {
     options?: string[];
   }[];
   baseUrl: string;
-  selectUrl: string;
+  selectUrl?: string | undefined;
 }
 
 const MemoizedMagnifyingGlassIcon = React.memo(() => (
   <MagnifyingGlassIcon className="primaryKeyIcon" />
 ));
 
-
 const PrimaryKeySearch: React.FC<PrimaryKeySearchProps<any>> = React.memo(
   ({ setState, primaryKeyInputs, baseUrl, selectUrl }) => {
     const { control, handleSubmit } = useForm<IPrimaryKeyState>();
     const [inputValues, setInputValues] = useState<IPrimaryKeyState>({});
-    const { searchEntityByPrimaryKeys } = useCrud(baseUrl);
+    const { searchEntityByPrimaryKeys, listEntity } = useCrud(baseUrl);
 
     //PASAR POR PARAMETROS
-    const { entities } = useEntityUtils(selectUrl, "02");
+    if (selectUrl) {
+      const { entities } = useEntityUtils(selectUrl, "02");
+    }
 
     const handleInputChange = React.useCallback(
       (name: string, value: string) => {
@@ -60,6 +62,14 @@ const PrimaryKeySearch: React.FC<PrimaryKeySearchProps<any>> = React.memo(
         .join("&");
 
       try {
+        const params = searchParams
+          ? searchParams.split("&").reduce((obj, param) => {
+              const [key, value] = param.split("=");
+              obj[key] = value;
+              return obj;
+            }, {})
+          : {};
+        console.log("params", params);
         const response = await searchEntityByPrimaryKeys(searchParams, "01");
         setState(response);
       } catch (error) {
@@ -92,29 +102,40 @@ const PrimaryKeySearch: React.FC<PrimaryKeySearchProps<any>> = React.memo(
           render={({ field }) => (
             <div className="mx-2">
               {input.type === "select" ? (
-                // ... Código para el select
-                <Select
-                  {...field}
-                  value={field.value.toString()}
-                  onChange={(e: any) => {
-                    field.onChange(e);
-                    const selectedValue = e.toString();
-                    if (selectedValue !== "") {
-                      handleSearch({ [input.name]: selectedValue });
-                    }
-                  }}
-                  label={input.label}
-                >
-                  <Option value={"0"}>{input.label}</Option>{" "}
-                  {/* Opción vacía */}
-                  {entities.map((entity, index) => (
-                    <Option key={index} value={entity[0] !== undefined ? entity[0].toString() : ''}>
-
-                      {entity[1]}
-                    </Option>
-                  ))}
-                </Select>
-              ) : input.type === "radiobuttons" ? (
+                <SelectInputComponent
+                  label="Cargo"
+                  name="_p2"
+                  showRefresh={false}
+                  control={control}
+                  entidad={["/api/cargos/", "02"]}
+                  inputName={input.name}
+                  setHandleSearch={handleSearch}
+                />
+              ) : // <Select
+              //   {...field}
+              //   onChange={(e: any) => {
+              //     field.onChange(e);
+              //     const selectedValue = e.toString();
+              //     if (selectedValue !== "") {
+              //       handleSearch({ [input.name]: selectedValue });
+              //     }
+              //   }}
+              //   label={input.label}
+              // >
+              //   <Option value={"0"}>{input.label}</Option>{" "}
+              //   {/* Opción vacía */}
+              //   {entities.map((entity, index) => (
+              //     <Option
+              //       key={index}
+              //       value={
+              //         entity[0] !== undefined ? entity[0].toString() : ""
+              //       }
+              //     >
+              //       {entity[1]}
+              //     </Option>
+              //   ))}
+              // </Select>
+              input.type === "radiobuttons" ? (
                 <div>
                   <label className="primaryKeyLabel">{input.label}</label>
                   <div className="primaryKeyRadioContainer">
@@ -165,8 +186,6 @@ const PrimaryKeySearch: React.FC<PrimaryKeySearchProps<any>> = React.memo(
         />
       ));
     };
-
-
 
     return (
       <form className="primaryKeyContainer">

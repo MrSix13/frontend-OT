@@ -12,7 +12,7 @@ import { useCrud, usePermission } from ".";
 export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
   const baseUrl = entityApiBaseUrl.startsWith("http")
     ? entityApiBaseUrl
-    : `http://127.0.0.1:8000${entityApiBaseUrl}`;
+    : `https://mtoopticos.cl${entityApiBaseUrl}`;
   const [entity, setEntity] = useState<any | null>(null);
   const [entities, setEntities] = useState<never[]>([]);
   const [pageSize, setPageSize] = useState(1);
@@ -23,10 +23,11 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
   const [onDelete, setDataGrid] = useState<boolean>(false);
 
   const { escritura } = usePermission();
-  const { listEntity, deleteAllEntity } = useCrud(baseUrl);
-
+  const { listEntity, deleteAllEntity, searchEntityByPrimaryKeys } =
+    useCrud(baseUrl);
+  // console.log("queryutils", query);
   const refreshData = useCallback(() => {
-    listEntity(pageSize, query)
+    listEntity(query)
       .then((data: []) => data && setEntities([...data]))
       .catch((e) => {
         console.log(e);
@@ -41,6 +42,7 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
     setisModalInsert(false);
     setIsModalEdit(false);
     setIsEntityProfile(false);
+    setSelectedIds([]);
   }, []);
 
   const handlePageSize = () => {
@@ -92,10 +94,10 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
   const handleSelectedAll = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setSelectedIds(
-        event.target.checked ? entities.map((entity) => entity[1]) : [],
+        event.target.checked ? entities.map((entity) => entity[1]) : []
       );
     },
-    [entities],
+    [entities]
   );
 
   const handleEntity = (id: number) => {
@@ -109,7 +111,7 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
     setSelectedIds((prevSelectedIds) =>
       prevSelectedIds.includes(id)
         ? prevSelectedIds.filter((selectedId) => selectedId !== id)
-        : [...prevSelectedIds, id],
+        : [...prevSelectedIds, id]
     );
   }, []);
 
@@ -131,7 +133,7 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
         setEntity(null);
       }
     },
-    [entities, escritura],
+    [entities, escritura]
   );
 
   // const handleDelete = async (id: number) => {
@@ -202,7 +204,7 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
         }
       }
     },
-    [selectedIds, escritura],
+    [selectedIds, escritura]
   );
 
   // const handleSelectedAll = useCallback(
@@ -268,12 +270,16 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
   // },[closeModal, escritura, entityID])
 
   useEffect(() => {
-    listEntity(pageSize, query)
+    searchEntityByPrimaryKeys("", query)
       .then((data: []) => {
-        data &&
-          setEntities((prev) =>
-            prev ? [...prev, ...data] : data && [...data],
-          );
+        if (data?.name === "AxiosError") {
+          return;
+        } else {
+          data &&
+            setEntities((prev) =>
+              prev ? [...prev, ...data] : data && [...data]
+            );
+        }
       })
       .catch((e) => {
         return e;
