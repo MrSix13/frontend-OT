@@ -6,7 +6,7 @@ import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-import { ERROR_MESSAGES, validationCargosSchema } from "../../utils";
+import { validationCargosSchema } from "../../utils";
 import { TextInputComponent } from "../../components";
 
 export interface ICargosInputData {

@@ -3,7 +3,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import React from "react";
-import { useCrud, useEntityUtils } from "../../hooks";
+import { useEntityUtils } from "../../hooks";
 import {
   PrimaryButtonsComponent,
   PrimaryKeySearch,
@@ -42,6 +42,7 @@ const CargosMantenedor: React.FC = () => {
   const handleSaveChange = React.useCallback(
     (data: ICargosInputData, isEditting: boolean) => {
       console.log("data cargos:", data);
+      console.log("data cargos:", isEditting);
     },
     []
   );

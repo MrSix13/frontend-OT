@@ -1,12 +1,12 @@
 import React from "react";
-import { useCrud, useEntityUtils } from "../../hooks";
+import { useEntityUtils } from "../../hooks";
 
-const strEntidad = "Cargo ";
+// const strEntidad = "Cargo ";
 const strBaseUrl = "/api/cargos/";
 const strQuery = "02";
 
 const FuncionalidadesMantenedor: React.FC = () => {
-  const { createdEntity, editEntity } = useCrud(strBaseUrl);
+  // const { createdEntity, editEntity } = useCrud(strBaseUrl);
 
   const {
     //Entities State

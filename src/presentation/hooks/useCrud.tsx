@@ -10,12 +10,12 @@ const useCrud = (
   createdEntity: (entityData: any) => Promise<any | undefined>;
   editEntity: (entityData: any) => Promise<any | undefined>;
   deleteAllEntity: (id: number[]) => Promise<any | undefined>;
-  listEntity: (
-    query: string,
-    _p1?: string,
-    _p2?: number,
-    _p3?: string
-  ) => Promise<any | undefined>;
+  // listEntity: (
+  //   query: string,
+  //   _p1?: string,
+  //   _p2?: number,
+  //   _p3?: string
+  // ) => Promise<any | undefined>;
   searchEntityByPrimaryKeys: (
     primaryKeys: string,
     query: string
@@ -23,7 +23,8 @@ const useCrud = (
 } => {
   const baseUrl = apiBaseUrl.startsWith("http")
     ? apiBaseUrl
-    : `https://mtoopticos.cl${apiBaseUrl}`;
+    : //  : `https://mtoopticos.cl${apiBaseUrl}`;
+      `http://127.0.0.1:8000${apiBaseUrl}`;
   const axiosInstance: AxiosInstance = axios.create({
     baseURL: baseUrl,
     headers: {
@@ -67,9 +68,9 @@ const useCrud = (
 
   const deleteAllEntity = async (id: number[]): Promise<void | unknown> => {
     try {
-      const idsDelete = id.join(",");
+      const idsDelete = `"${id.join(",")}"`;
       const response = await axiosInstance.delete(
-        `/eliminar/?_p1=${idsDelete}&query=05`
+        `/eliminar/?query=05&_p2=${idsDelete}&`
       );
       return response.data;
     } catch (error) {
@@ -77,31 +78,31 @@ const useCrud = (
     }
   };
 
-  const listEntity = async (
-    query: string,
-    params: {
-      _p1?: string;
-      _p2?: number;
-      _p3?: string;
-      _p4?: number;
-    } = {}
-  ): Promise<void | unknown> => {
-    try {
-      console.log("params:", params);
-      const _p1 = params._p1;
-      const { _p2 = 0, _p3 = "", _p4 = 0 } = params;
+  // const listEntity = async (
+  //   query: string,
+  //   params: {
+  //     _p1?: string;
+  //     _p2?: number;
+  //     _p3?: string;
+  //     _p4?: number;
+  //   } = {}
+  // ): Promise<void | unknown> => {
+  //   try {
+  //     console.log("params:", params);
+  //     const _p1 = params._p1;
+  //     const { _p2 = 0, _p3 = "", _p4 = 0 } = params;
 
-      console.log("_p2:", _p2);
-      console.log("_p1:", _p1);
+  //     console.log("_p2:", _p2);
+  //     console.log("_p1:", _p1);
 
-      const endpoint = `/listado/?query=${query}&_p1=${_p1}&_p2=${_p2}&_p3=${_p3}&_p4=${_p4}`;
-      console.log("endpoint", endpoint);
-      const response = await axiosInstance.get(endpoint);
-      return response.data;
-    } catch (error) {
-      return error;
-    }
-  };
+  //     const endpoint = `/listado/?query=${query}&_p1=${_p1}&_p2=${_p2}&_p3=${_p3}&_p4=${_p4}`;
+  //     console.log("endpoint", endpoint);
+  //     const response = await axiosInstance.get(endpoint);
+  //     return response.data;
+  //   } catch (error) {
+  //     return error;
+  //   }
+  // };
 
   // const listEntity = async (
   //   query: string,
@@ -125,7 +126,6 @@ const useCrud = (
     createdEntity,
     editEntity,
     searchEntityByPrimaryKeys,
-    listEntity,
     deleteAllEntity,
   };
 };

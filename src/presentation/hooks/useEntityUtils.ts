@@ -12,7 +12,8 @@ import { useCrud, usePermission } from ".";
 export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
   const baseUrl = entityApiBaseUrl.startsWith("http")
     ? entityApiBaseUrl
-    : `https://mtoopticos.cl${entityApiBaseUrl}`;
+    : // : `https://mtoopticos.cl${entityApiBaseUrl}`;
+      `http://127.0.0.1:8000${entityApiBaseUrl}`;
   const [entity, setEntity] = useState<any | null>(null);
   const [entities, setEntities] = useState<never[]>([]);
   const [pageSize, setPageSize] = useState(1);
@@ -23,11 +24,10 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
   const [onDelete, setDataGrid] = useState<boolean>(false);
 
   const { escritura } = usePermission();
-  const { listEntity, deleteAllEntity, searchEntityByPrimaryKeys } =
-    useCrud(baseUrl);
+  const { deleteAllEntity, searchEntityByPrimaryKeys } = useCrud(baseUrl);
   // console.log("queryutils", query);
   const refreshData = useCallback(() => {
-    listEntity(query)
+    searchEntityByPrimaryKeys("", query)
       .then((data: []) => data && setEntities([...data]))
       .catch((e) => {
         console.log(e);
@@ -271,10 +271,11 @@ export const useEntityUtils = (entityApiBaseUrl: string, query: string) => {
 
   useEffect(() => {
     searchEntityByPrimaryKeys("", query)
-      .then((data: []) => {
+      .then((data: any) => {
         if (data?.name === "AxiosError") {
           return;
         } else {
+          console.log('data', data)
           data &&
             setEntities((prev) =>
               prev ? [...prev, ...data] : data && [...data]

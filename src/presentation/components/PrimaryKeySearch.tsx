@@ -2,17 +2,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import {
-  IconButton,
-  Input,
-  Option,
-  Select,
-  Tooltip,
-} from "@material-tailwind/react";
+import { IconButton, Input, Tooltip } from "@material-tailwind/react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 import useCrud from "../hooks/useCrud";
-import { useEntityUtils } from "../hooks";
 import { SelectInputComponent } from ".";
 
 interface IPrimaryKeyState {
@@ -28,7 +21,7 @@ interface PrimaryKeySearchProps<T> {
     options?: string[];
   }[];
   baseUrl: string;
-  selectUrl?: string | undefined;
+  selectUrl?: any;
 }
 
 const MemoizedMagnifyingGlassIcon = React.memo(() => (
@@ -39,12 +32,7 @@ const PrimaryKeySearch: React.FC<PrimaryKeySearchProps<any>> = React.memo(
   ({ setState, primaryKeyInputs, baseUrl, selectUrl }) => {
     const { control, handleSubmit } = useForm<IPrimaryKeyState>();
     const [inputValues, setInputValues] = useState<IPrimaryKeyState>({});
-    const { searchEntityByPrimaryKeys, listEntity } = useCrud(baseUrl);
-
-    //PASAR POR PARAMETROS
-    if (selectUrl) {
-      const { entities } = useEntityUtils(selectUrl, "02");
-    }
+    const { searchEntityByPrimaryKeys } = useCrud(baseUrl);
 
     const handleInputChange = React.useCallback(
       (name: string, value: string) => {
@@ -63,11 +51,13 @@ const PrimaryKeySearch: React.FC<PrimaryKeySearchProps<any>> = React.memo(
 
       try {
         const params = searchParams
-          ? searchParams.split("&").reduce((obj, param) => {
-              const [key, value] = param.split("=");
-              obj[key] = value;
-              return obj;
-            }, {})
+          ? searchParams
+              .split("&")
+              .reduce((obj: Record<string, string>, param) => {
+                const [key, value] = param.split("=");
+                obj[key] = value;
+                return obj;
+              }, {})
           : {};
         console.log("params", params);
         const response = await searchEntityByPrimaryKeys(searchParams, "01");
@@ -107,7 +97,7 @@ const PrimaryKeySearch: React.FC<PrimaryKeySearchProps<any>> = React.memo(
                   name="_p2"
                   showRefresh={false}
                   control={control}
-                  entidad={["/api/cargos/", "02"]}
+                  entidad={[selectUrl, "02"]}
                   inputName={input.name}
                   setHandleSearch={handleSearch}
                 />

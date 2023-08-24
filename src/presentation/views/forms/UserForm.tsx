@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect } from "react";
+import React from "react";
 import {
   RadioButtonComponent,
   SelectInputComponent,
@@ -27,7 +27,7 @@ export interface IUserInputData {
 interface OutputData {
   query: string;
   _p1: string;
-  _p3?: string;
+  _p2?: string;
 }
 
 export function transformInsertQuery(
@@ -69,12 +69,15 @@ export function transformUpdateQuery(
     return null;
   }
 
-  const _p3 = filteredFields.join(",");
+  // const _p1 = `"${filteredFields.join(",")}"`;
+  const _p1 = filteredFields.join(",");
+  console.log("_p1", _p1);
+  console.log("_p2", primaryKey);
 
   return {
     query: "04",
-    _p1: primaryKey,
-    _p3,
+    _p1,
+    _p2: primaryKey,
   };
 }
 
@@ -93,19 +96,18 @@ const UserForm: React.FC<IUserFormPrps> = React.memo(
       control,
       handleSubmit,
       formState: { errors },
-      setValue,
     } = useForm({
       resolver: yupResolver(schema),
     });
 
-    useEffect(() => {
-      if (data) {
-        setValue("nombre", data[EnumGrid.Nombre]);
-        setValue("password", "");
-        setValue("password2", ""); // Asegúrate de establecer password2 también
-        // ... establecer los valores para los otros campos
-      }
-    }, [data, setValue]);
+    // useEffect(() => {
+    //   if (data) {
+    //     setValue("nombre", data[EnumGrid.Nombre]);
+    //     setValue("password", "");
+    //     setValue("password2", ""); // Asegúrate de establecer password2 también
+    //     // ... establecer los valores para los otros campos
+    //   }
+    // }, [data, setValue]);
     return (
       <div className="useFormContainer">
         <div className="userFormBtnCloseContainer">
