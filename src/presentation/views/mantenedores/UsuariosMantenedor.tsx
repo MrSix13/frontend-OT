@@ -126,6 +126,7 @@ const UsuariosMantenedor: React.FC = () => {
         <PrimaryButtonsComponent
           handleAddPerson={openModal}
           handleDeleteSelected={handleDeleteSelected}
+          strBaseUrl={strBaseUrl}
           showAddButton={true}
           showExportButton={true}
           showDeleteButton={true}

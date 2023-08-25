@@ -10,12 +10,7 @@ const useCrud = (
   createdEntity: (entityData: any) => Promise<any | undefined>;
   editEntity: (entityData: any) => Promise<any | undefined>;
   deleteAllEntity: (id: number[]) => Promise<any | undefined>;
-  // listEntity: (
-  //   query: string,
-  //   _p1?: string,
-  //   _p2?: number,
-  //   _p3?: string
-  // ) => Promise<any | undefined>;
+  exportEntity: () => Promise<any | undefined>;
   searchEntityByPrimaryKeys: (
     primaryKeys: string,
     query: string
@@ -31,6 +26,27 @@ const useCrud = (
       "Content-Type": "application/json",
     },
   });
+
+  const exportEntity = async (): Promise<void> => {
+    try {
+      const response = await axiosInstance.get("/excel/?query=01", {
+        responseType: "blob",
+      });
+
+      const fileURL: string = URL.createObjectURL(
+        new Blob([response.data], { type: "application/vnd.ms-excel" })
+      );
+
+      const link: HTMLAnchorElement = document.createElement("a");
+      link.href = fileURL;
+      link.setAttribute("download", "entidad.xls");
+      document.body.appendChild(link);
+      link.click();
+      URL.revokeObjectURL(fileURL);
+    } catch (error) {
+      throw new Error("Error al descargar Exceñ");
+    }
+  };
 
   const searchEntityByPrimaryKeys = async (
     primaryKeys: string,
@@ -127,6 +143,7 @@ const useCrud = (
     editEntity,
     searchEntityByPrimaryKeys,
     deleteAllEntity,
+    exportEntity,
   };
 };
 

@@ -5,6 +5,7 @@ import { SiAddthis } from "react-icons/si";
 import { FiRefreshCw } from "react-icons/fi";
 import { usePermission } from "../hooks";
 import { BUTTON_MESSAGES } from "../utils";
+import { ExportCSV } from "./ExportToCsv";
 
 interface IPrimaryButtonProps {
   handlePageSize?: () => void;
@@ -19,6 +20,7 @@ interface IPrimaryButtonProps {
   showRefreshButton?: boolean;
   showDeleteButton?: boolean;
   showExportButton?: boolean;
+  strBaseUrl?: string;
 }
 
 const PrimaryButtonsComponent: React.FC<IPrimaryButtonProps> = React.memo(
@@ -31,7 +33,8 @@ const PrimaryButtonsComponent: React.FC<IPrimaryButtonProps> = React.memo(
     showAddButton,
     showRefreshButton,
     showDeleteButton,
-    // showExportButton,
+    strBaseUrl,
+    showExportButton,
   }) => {
     const { escritura } = usePermission();
 
@@ -88,7 +91,7 @@ const PrimaryButtonsComponent: React.FC<IPrimaryButtonProps> = React.memo(
             BUTTON_MESSAGES.refresh
           )}
 
-        {/* {showExportButton && <ExportCSV data={personsLength} />} */}
+        {showExportButton && <ExportCSV strBaseUrl={strBaseUrl} />}
 
         {showDeleteButton &&
           escritura &&
